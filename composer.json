@@ -23,7 +23,7 @@
     "require": {
         "sunnysideup/ecommerce": "*",
         "silverstripe/framework": "~3.6",
-        "nicolab/php-ftp-client": "~5.1"
+        "nicolab/php-ftp-client": "~1.5"
     },
     "extra": {
         "installer-name": "ecommerce_trademe"
