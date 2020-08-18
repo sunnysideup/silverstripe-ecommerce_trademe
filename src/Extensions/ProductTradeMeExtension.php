@@ -125,6 +125,6 @@ class ProductTradeMeExtension extends Extension
         while ($parent && ! $parent->TradeMeCategoryID) {
             $parent = ProductGroup::get()->byID($parent->ParentID);
         }
-        return intval($parent->TradeMeCategoryID) ?: 0;
+        return (int) $parent->TradeMeCategoryID ?: 0;
     }
 }
