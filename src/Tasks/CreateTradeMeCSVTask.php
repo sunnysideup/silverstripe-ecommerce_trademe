@@ -47,7 +47,7 @@ class CreateTradeMeCSVTask extends BuildTask
         $data = CSVFunctionality::convertToCSV($this->getData(), ',');
         //set file
         file_put_contents($path, $data);
-        $this->printMessage('<hr> <hr> <hr> <hr> DONE');
+        return SS_HTTPRequest::send_file($data, basename($fileName), 'text/csv');
     }
 
     /**
