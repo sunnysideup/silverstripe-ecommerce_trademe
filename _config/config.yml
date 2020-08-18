@@ -1,0 +1,18 @@
+---
+Name: ecommerce_trade_me
+Before: 'mysite/*'
+After: 'framework/*','cms/*','ecommerce/*'
+---
+
+ProductGroup:
+  extensions:
+    - ProductGroupTradeMeExtension
+
+Product:
+  extensions:
+    - ProductTradeMeExtension
+
+
+EcommerceDBConfig:
+  extensions:
+    - EcommerceConfigTradeMeExtension
