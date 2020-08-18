@@ -119,7 +119,7 @@ class ProductTradeMeExtension extends Extension
     /**
      * @return int
      */
-    protected function UncalculatedTradeMeCategoryID(): int
+    public function UncalculatedTradeMeCategoryID(): int
     {
         $parent = $this->owner;
         while ($parent && ! $parent->TradeMeCategoryID) {
