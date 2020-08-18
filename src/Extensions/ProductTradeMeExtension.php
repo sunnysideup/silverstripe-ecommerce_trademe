@@ -123,8 +123,11 @@ class ProductTradeMeExtension extends Extension
     {
         $parent = $this->owner;
         while ($parent && ! $parent->TradeMeCategoryID) {
+            if($parent->TradeMeCategoryID) {
+                return $parent->TradeMeCategoryID;
+            }
             $parent = ProductGroup::get()->byID($parent->ParentID);
         }
-        return (int) $parent->TradeMeCategoryID ?: 0;
+        return 0;
     }
 }
