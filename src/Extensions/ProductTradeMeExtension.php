@@ -51,9 +51,9 @@ class ProductTradeMeExtension extends Extension
 
     public function getCalculatedTradeMeCategory(): int
     {
-        $parent = $this;
+        $parent = $this->owner;
         while ($parent) {
-            $id = $parent->CalculatedTradeMeCategoryWithDefaultAndAdjustments();
+            $id = $parent->TradeMeCategoryID;
             if ($id) {
                 return $id;
             }
@@ -68,7 +68,7 @@ class ProductTradeMeExtension extends Extension
      */
     public function isTradeMeProduct(): bool
     {
-        return $this->owner->AlwaysShowOnTradeMe || $this->owner->UncalculatedTradeMeCategoryID() ? true : false;
+        return $this->owner->AlwaysShowOnTradeMe || $this->owner->getCalculatedTradeMeCategory() ? true : false;
     }
 
     /**
@@ -77,7 +77,7 @@ class ProductTradeMeExtension extends Extension
      */
     public function CalculatedTradeMeCategoryWithDefaultAndAdjustments(): int
     {
-        $categoryID = $this->owner->UncalculatedTradeMeCategoryID();
+        $categoryID = $this->owner->getCalculatedTradeMeCategory();
 
         if ($categoryID) {
             if ($this->owner->hasMethod('getTradeMeCustomCategory')) {
@@ -116,18 +116,4 @@ class ProductTradeMeExtension extends Extension
         return $result;
     }
 
-    /**
-     * @return int
-     */
-    public function UncalculatedTradeMeCategoryID(): int
-    {
-        $parent = $this->owner;
-        while ($parent && ! $parent->TradeMeCategoryID) {
-            if($parent->TradeMeCategoryID) {
-                return $parent->TradeMeCategoryID;
-            }
-            $parent = ProductGroup::get()->byID($parent->ParentID);
-        }
-        return 0;
-    }
 }
