@@ -9,7 +9,7 @@ class CreateTradeMeCSVTask extends BuildTask
     /**
      * @var bool
      */
-    protected $enabled = false;
+    protected $enabled = true;
 
     /**
      * @inherit
