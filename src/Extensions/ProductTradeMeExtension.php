@@ -81,13 +81,13 @@ class ProductTradeMeExtension extends Extension
 
         if ($categoryID) {
             if ($this->owner->hasMethod('getTradeMeCustomCategory')) {
-                $category = $this->owner->getTradeMeCustomCategory($category);
+                $categoryID = $this->owner->getTradeMeCustomCategory($categoryID);
             }
         } else {
-            $category = Config::inst()->get('TradeMeCategories', 'trade_me_default');
+            $categoryID = Config::inst()->get('TradeMeCategories', 'trade_me_default');
         }
 
-        return $category;
+        return $categoryID;
     }
 
     public function getTradeMeTitle($checkLimit = true)
