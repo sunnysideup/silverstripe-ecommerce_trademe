@@ -52,6 +52,9 @@ class CreateTradeMeCSVTask extends BuildTask
         //set file
         file_put_contents($pathToFile, $data);
         echo '<h1><a href="'.ExportToTradeMeTask::url_location().'">Download Results</a></h1>';
+        if(Director::isLive()) {
+            echo '<h1><a href="/dev/tasks/ExportToTradeMeTask/">Export data to to TradeMe</a></h1>';
+        }
     }
 
     /**
