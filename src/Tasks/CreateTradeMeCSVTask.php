@@ -48,7 +48,7 @@ class CreateTradeMeCSVTask extends BuildTask
         //set file
         file_put_contents($pathToFile, $data);
         if($this->debug !== true) {
-            return SS_HTTPRequest::send_file($data, basename($pathToFile), 'text/csv');
+            echo '<h1><a href="'.ExportToTradeMeTask::url_location().'">Download Results</a></h1>';
         }
     }
 
