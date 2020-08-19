@@ -42,12 +42,15 @@ class CreateTradeMeCSVTask extends BuildTask
     public function run($request)
     {
         increase_time_limit_to(600);
+        $this->debug = empty($_GET['details']) ? false : true;
+        if(! $this->debug) {
+            echo '<h1>Add ?details=1 to your URL to see all the details on screen...</h1>';
+        }
         //get details
         $pathToFile = ExportToTradeMeTask::file_location();
         $data = CSVFunctionality::convertToCSV($this->getData(), ',');
         //set file
         file_put_contents($pathToFile, $data);
-        $this->debug = empty($_GET['debug']) ? false : true;
         echo '<h1><a href="'.ExportToTradeMeTask::url_location().'">Download Results</a></h1>';
     }
 
