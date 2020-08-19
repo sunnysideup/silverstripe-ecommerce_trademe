@@ -108,10 +108,10 @@ class ProductTradeMeExtension extends Extension
         $content = str_replace('&', ' and ', $content);
         $content = str_replace('</p>', '<br><br>', $content);
         $content = strip_tags($content, '<br><br />') ?: '';
-        $result = "${intro}\n\n" . ($content ?: '');
+        $content = trim("${intro}<br /><br />" . ($content ?: ''));
         if ($checkLimit) {
             $limit = 2048;
-            $result = substr($result, 0, $limit);
+            $result = substr($content, 0, $limit);
         }
         return $result;
     }
