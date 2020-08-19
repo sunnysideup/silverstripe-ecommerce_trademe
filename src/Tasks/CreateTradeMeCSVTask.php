@@ -24,7 +24,7 @@ class CreateTradeMeCSVTask extends BuildTask
     /**
      * @var bool
      */
-    protected $debug = true;
+    protected $debug = false;
 
     /**
      * @var int
