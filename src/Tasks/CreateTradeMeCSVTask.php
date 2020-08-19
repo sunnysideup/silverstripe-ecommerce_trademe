@@ -43,11 +43,11 @@ class CreateTradeMeCSVTask extends BuildTask
     {
         increase_time_limit_to(600);
         //get details
-        $path = ExportToTradeMeTask::file_location();
+        $pathToFile = ExportToTradeMeTask::file_location();
         $data = CSVFunctionality::convertToCSV($this->getData(), ',');
         //set file
-        file_put_contents($path, $data);
-        return SS_HTTPRequest::send_file($data, basename($fileName), 'text/csv');
+        file_put_contents($pathToFile, $data);
+        return SS_HTTPRequest::send_file($data, basename($pathToFile), 'text/csv');
     }
 
     /**
