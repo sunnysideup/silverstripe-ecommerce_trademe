@@ -61,4 +61,42 @@ class CreateTradeMeCSVTask extends BuildTask
     {
         user_error('You need to extend this method');
     }
+
+    protected function getFirstImage($product) : string
+    {
+        $list = $this->getImageCollections($product);
+
+        return !empty($list) ? array_shift($list) : '';
+    }
+
+    protected function getImageCollections($product) : array
+    {
+        $imageCollection = [
+            $product->Image()
+        ];
+        foreach($product->AdditionalImages() as $image) {
+            $imageCollection[] = $image;
+        }
+        $fileNames = [];
+        foreach($imageCollection as $image) {
+            if($image) {
+                if($image->getWidth() >= $this->minImageWidth && $image->getHeight() >= $this->minImageHeight) {
+                    $fileNames[] = $image->AbsoluteLink();
+                } else {
+                    if($this->debug) {
+                        DB::alteration_message(
+                            '
+                                ---- Image '.$image->AbsoluteLink().' for '.$product->InternalItemID.' is too small for TradeMe.
+                                Please upload a bigger image.
+                                The Minimum Width is: '.$this->minImageWidth.', the image is: '.$image->getWidth() .'.
+                                The Minimum Height is: '.$this->minImageHeight.', the image is: '.$image->getHeight() .'.
+                            ',
+                            'deleted'
+                        );
+                    }
+                }
+            }
+        }
+        return $fileNames;
+    }
 }
