@@ -81,11 +81,14 @@ class CreateTradeMeCSVTask extends BuildTask
             $imageCollection[] = $image;
         }
         $fileNames = [];
-        foreach($imageCollection as $image) {
+        $bestOptionArray = [];
+        foreach($imageCollection as $key => $image) {
             if($image) {
+                $size = (int) $image->getWidth() * (int) $image->getHeight();
                 if($image->getWidth() >= $this->minImageWidth && $image->getHeight() >= $this->minImageHeight) {
-                    $fileNames[] = $image->AbsoluteLink();
+                    $link = $image->AbsoluteLink();
                 } elseif($image->getWidth()) {
+                    $link = $image->Pad($this->minImageWidth, $this->minImageHeight)->Link();
                     if($this->debug) {
                         DB::alteration_message(
                             '
@@ -98,8 +101,10 @@ class CreateTradeMeCSVTask extends BuildTask
                         );
                     }
                 }
+                $fileNames[$size] = $link;
             }
         }
+        krsort($fileNames, SORT_NUMERIC);
         return $fileNames;
-    }        
+    }     
 }
