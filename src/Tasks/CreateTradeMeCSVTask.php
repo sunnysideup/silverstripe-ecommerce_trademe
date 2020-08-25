@@ -101,10 +101,12 @@ class CreateTradeMeCSVTask extends BuildTask
                         );
                     }
                 }
-                $fileNames[$size] = $link;
+                if($link) {
+                    $fileNames[$size] = $link;
+                }
             }
         }
         krsort($fileNames, SORT_NUMERIC);
         return $fileNames;
-    }     
+    }   
 }
