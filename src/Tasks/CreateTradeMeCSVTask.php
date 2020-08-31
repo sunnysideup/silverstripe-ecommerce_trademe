@@ -81,25 +81,32 @@ class CreateTradeMeCSVTask extends BuildTask
             $imageCollection[] = $image;
         }
         $fileNames = [];
-        foreach($imageCollection as $image) {
+        $bestOptionArray = [];
+        foreach($imageCollection as $key => $image) {
             if($image) {
+                $size = (int) $image->getWidth() * (int) $image->getHeight();
                 if($image->getWidth() >= $this->minImageWidth && $image->getHeight() >= $this->minImageHeight) {
-                    $fileNames[] = $image->AbsoluteLink();
-                } else {
+                    $link = $image->AbsoluteLink();
+                } elseif($image->getWidth()) {
+                    $link = $image->Pad($this->minImageWidth, $this->minImageHeight)->Link();
                     if($this->debug) {
                         DB::alteration_message(
                             '
-                                ---- Image '.$image->AbsoluteLink().' for '.$product->InternalItemID.' is too small for TradeMe.
+                                ---- <a href="'.$image->AbsoluteLink().'">Image for '.$product->Title.' ('.$product->InternalItemID.')</a> is too small for TradeMe.
                                 Please upload a bigger image.
-                                The Minimum Width is: '.$this->minImageWidth.', the image is: '.$image->getWidth() .'.
-                                The Minimum Height is: '.$this->minImageHeight.', the image is: '.$image->getHeight() .'.
+                                The minimum size is is: '.$this->minImageWidth.'px x '.$this->minImageHeight.'px,
+                                the image is: '.$image->getWidth() .'px  x '.$image->getHeight() .'px.
                             ',
                             'deleted'
                         );
                     }
                 }
+                if($link) {
+                    $fileNames[$size] = $link;
+                }
             }
         }
+        krsort($fileNames, SORT_NUMERIC);
         return $fileNames;
     }
 }

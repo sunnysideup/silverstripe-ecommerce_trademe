@@ -1,0 +1,6 @@
+---
+Name: trademeroutes
+---
+Director:
+  rules:
+    'set-trade-me-categories//$Action/$ID/$OtherID': 'TradeMeAssignController'
