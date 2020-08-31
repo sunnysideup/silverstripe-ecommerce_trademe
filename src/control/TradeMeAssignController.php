@@ -29,7 +29,7 @@ class TradeMeAssignController extends Controller
     {
         $fields = new FieldList();
         $list = TradeMeCategories::get_categories();
-        foreach (ProductGroup::get() as $group) {
+        foreach (ProductGroup::get()->filter($this->Config()->get('filter')) as $group) {
             $name = '___GROUP___'.$group->ID;
             $fields->push(
                 ReadonlyField::create(
