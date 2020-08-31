@@ -108,5 +108,5 @@ class CreateTradeMeCSVTask extends BuildTask
         }
         krsort($fileNames, SORT_NUMERIC);
         return $fileNames;
-    }
+    }   
 }
