@@ -31,6 +31,11 @@ class TradeMeAssignController extends Controller
 
     public function RelativeLink($action = null)
     {
+        return self::my_link($action);
+    }
+
+    public static function my_link($action = null)
+    {
         return Controller::join_links('set-trade-me-categories', $action);
     }
 

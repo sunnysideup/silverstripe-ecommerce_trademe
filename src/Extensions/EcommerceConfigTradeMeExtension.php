@@ -14,6 +14,10 @@ class EcommerceConfigTradeMeExtension extends DataExtension
     public function UpdateCMSFields(FieldList $fields)
     {
         //offline
-        $fields->addFieldToTab('Root.TradeMe', TextareaField::create('TradeMeIntro'));
+        $fields->addFieldsToTab(
+            'Root.TradeMe',
+            TextareaField::create('TradeMeIntro'),
+            LiteralField::create('TradeMeLink', '<h2><a href="'.TradeMeAssignController::my_link().'">quick edit categories</a></h2>')
+        );
     }
 }

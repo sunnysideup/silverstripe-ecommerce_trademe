@@ -28,8 +28,9 @@ class ProductGroupTradeMeExtension extends DataExtension
                     $this->owner->dbObject('ListProductsOnTradeMe')->enumValues()
                 )->setDescription('
                     Careful - saving this will also change the value for any underlying categories.
-                    E.g. If you set this value for Vegetables, it will also apply to Brocoli'),
+                    <br />E.g. If you set this value for Vegetables, it will also apply to Brocoli'),
                 TradeMeCategories::calculated_categories_field($this->owner),
+                LiteralField::create('TradeMeLink', '<h2><a href="'.TradeMeAssignController::my_link().'">quick edit categories</a></h2>')
             ]
         );
 
