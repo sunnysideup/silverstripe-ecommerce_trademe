@@ -3,6 +3,12 @@
 class TradeMeAssignController extends Controller
 {
 
+
+	/**
+	 * @var string
+	 */
+	private static $url_segment = 'set-trade-me-categories';
+
     private static $allowed_actions = [
         'index' => 'ADMIN',
         'save' => 'ADMIN',
@@ -10,6 +16,11 @@ class TradeMeAssignController extends Controller
     ];
 
     private static $filter = [];
+
+	/**
+	 * @var string
+	 */
+	private static $menu_title = 'Trade Me Categories';
 
     public function init()
     {
@@ -19,9 +30,9 @@ class TradeMeAssignController extends Controller
         }
     }
 
-    public function index()
+    public function index($request)
     {
-        return $this->renderWith('TradeMeAssignController');
+        return $this->renderWith('TradeMeAssignController_Content');
     }
 
     public function Link($action = null) {
@@ -36,7 +47,7 @@ class TradeMeAssignController extends Controller
 
     public static function my_link($action = null)
     {
-        return Controller::join_links('set-trade-me-categories', $action);
+        return Controller::join_links(self::$url_segment, $action);
     }
 
     public function Form()
