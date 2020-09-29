@@ -6,6 +6,9 @@
  */
 class CreateTradeMeCSVTask extends BuildTask
 {
+
+    private const SUBTITLE = 'NZ Based Company – Full manufactures Warranty – 30+ years in business';
+
     /**
      * @var bool
      */
@@ -85,6 +88,7 @@ class CreateTradeMeCSVTask extends BuildTask
         foreach($imageCollection as $key => $image) {
             if($image) {
                 $size = (int) $image->getWidth() * (int) $image->getHeight();
+                $link = '';
                 if($image->getWidth() >= $this->minImageWidth && $image->getHeight() >= $this->minImageHeight) {
                     $link = $image->AbsoluteLink();
                 } elseif($image->getWidth()) {
@@ -108,5 +112,5 @@ class CreateTradeMeCSVTask extends BuildTask
         }
         krsort($fileNames, SORT_NUMERIC);
         return $fileNames;
-    }   
+    }
 }
