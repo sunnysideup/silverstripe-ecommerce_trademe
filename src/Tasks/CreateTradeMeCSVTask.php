@@ -7,7 +7,7 @@
 class CreateTradeMeCSVTask extends BuildTask
 {
 
-    private const SUBTITLE = 'NZ Based Company – Full manufactures Warranty – 30+ years in business';
+    //private const SUBTITLE = 'NZ Based Company – Full manufactures Warranty – 30+ years in business';
 
     /**
      * @var bool
