@@ -3,4 +3,5 @@ Name: trademeroutes
 ---
 Director:
   rules:
-    'set-trade-me-categories//$Action/$ID/$OtherID': 'TradeMeAssignController'
+    'set-trade-me-categories//$Action/$ID/$OtherID': 'TradeMeAssignGroupController'
+    'set-trade-me-products//$Action/$ID/$OtherID': 'TradeMeAssignProductController'

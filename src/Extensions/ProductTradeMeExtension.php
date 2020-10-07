@@ -43,7 +43,7 @@ class ProductTradeMeExtension extends Extension
                     TradeMeCategories::get_categories()
                 ),
                 TradeMeCategories::calculated_categories_field($this->owner),
-                LiteralField::create('TradeMeLink', '<h2><a href="'.TradeMeAssignController::my_link().'">quick edit categories</a></h2>')
+                LiteralField::create('TradeMeLink', '<h2><a href="'.TradeMeAssignGroupController::my_link().'">quick edit categories</a></h2>')
             ]
         );
 
