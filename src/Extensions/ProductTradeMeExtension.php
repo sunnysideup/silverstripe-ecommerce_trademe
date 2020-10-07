@@ -10,6 +10,15 @@ class ProductTradeMeExtension extends Extension
     private static $db = [
         'TradeMeCategoryID' => 'Int',
         'AlwaysShowOnTradeMe' => 'Boolean',
+        'IncludeOnTradeMe' => 'Boolean',
+    ];
+    /**
+     * stadard SS declaration
+     * @var array
+     */
+    private static $indexes = [
+        'AlwaysShowOnTradeMe' => true,
+        'IncludeOnTradeMe' => true,
     ];
 
     /**
@@ -43,10 +52,23 @@ class ProductTradeMeExtension extends Extension
                     TradeMeCategories::get_categories()
                 ),
                 TradeMeCategories::calculated_categories_field($this->owner),
-                LiteralField::create('TradeMeLink', '<h2><a href="'.TradeMeAssignGroupController::my_link().'">quick edit categories</a></h2>')
+                LiteralField::create('TradeMeLink1', '<h2><a href="'.TradeMeAssignGroupController::my_link().'">quick edit categories</a></h2>'),
+                LiteralField::create('TradeMeLink2', '<h2><a href="'.TradeMeAssignProductController::my_link().'">quick edit products</a></h2>')
             ]
         );
-
+        $parent = $this->owner->Parent();
+        if($parent && $parent->exists()) {
+            $fields->addFieldToTab(
+                "Root.TradeMe",
+                (new CheckboxField('IncludeOnTradeMe', 'Show on Trade Me'))
+                    ->setDescription('
+                        If the parent category ('.$parent->Title.') is set to "SOME"
+                        then checking this box will ensure the product is shown on Trade Me.
+                        <br />Currently <strong>'.$parent->Title.'</strong> it is set to include <strong>'.strtoupper($parent->ListProductsOnTradeMe).'</strong> of its products.
+                    '),
+                'TradeMeCategoryID'
+            );
+        }
         return $fields;
     }
 

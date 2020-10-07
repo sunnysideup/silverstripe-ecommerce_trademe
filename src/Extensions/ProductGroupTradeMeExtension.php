@@ -34,7 +34,7 @@ class ProductGroupTradeMeExtension extends DataExtension
             ]
         );
 
-        return $fields;
+
     }
 
     public function onBeforeWrite()
