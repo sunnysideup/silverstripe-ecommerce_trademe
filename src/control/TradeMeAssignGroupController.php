@@ -63,7 +63,7 @@ class TradeMeAssignGroupController extends Controller
                     '',
                     $group->Breadcrumbs()
                 )->setDescription('
-                    <a href="'.$group->CMSEditLink().'">edit in cms</a>'
+                    <a href="'.$group->CMSEditLink().'">✎</a>'
                 )
             );
             $fields->push(
