@@ -7,7 +7,7 @@ class TradeMeAssignProductController extends Controller
 	/**
 	 * @var string
 	 */
-	private static $url_segment = 'set-trade-me-categories';
+	private static $url_segment = 'set-trade-me-products';
 
     private static $allowed_actions = [
         'index' => 'ADMIN',
@@ -53,7 +53,13 @@ class TradeMeAssignProductController extends Controller
     public function Form()
     {
         $fields = new FieldList();
-        $list = Product::get()->filterAny(['IncludeOnTradeMe' => true, 'AlwaysShowOnTradeMe' => true]);
+        $list = Product::get()->filterAny(
+			[
+				'IncludeOnTradeMe' => true,
+				'AlwaysShowOnTradeMe' => true
+			]
+		);
+
         foreach ($list as $product) {
             $name = '___PRODUCT___'.$product->ID;
             $fields->push(
@@ -66,15 +72,21 @@ class TradeMeAssignProductController extends Controller
                 )
             );
             $fields->push(
-                CheckboxField::create(
+                // OptionsetFieldyyy::create(
+                //     'IncludeOnTradeMe'.$name,
+                //     'Include on TradeMe if category is included'
+                // )->setValue($product->IncludeOnTradeMe)
+                OptionsetField::create(
                     'IncludeOnTradeMe'.$name,
-                    'Include on TradeMe if category is included'
+                    'Include on TradeMe if category is included',
+					[0 => 'no', 1 => 'yes']
                 )->setValue($product->IncludeOnTradeMe)
             );
             $fields->push(
-                CheckboxField::create(
+                OptionsetField::create(
                     'AlwaysShowOnTradeMe'.$name,
-                    'Always show on TradeMe'
+                    'Always show on TradeMe',
+					[0 => 'no', 1 => 'yes']
                 )->setValue($product->AlwaysShowOnTradeMe)
             );
             $fields->push(
@@ -84,6 +96,7 @@ class TradeMeAssignProductController extends Controller
                 )
             );
         }
+
         $actions = new FieldList(
             FormAction::create('save', 'Update')
         );
