@@ -89,6 +89,7 @@ class TradeMeAssignGroupController extends Controller
 
         return $list;
     }
+
     public function Form()
     {
         $fields = new FieldList();
@@ -203,5 +204,36 @@ class TradeMeAssignGroupController extends Controller
             $al->push(ArrayData::create($array));
         }
         return $al;
+    }
+
+    public static function default_fields_for_model(?int $groupID = 0)
+    {
+        return [
+            ReadonlyField::create(
+                'TradeMeLink1',
+                'Categories',
+                DBField::create_field(
+                    'HTMLText',
+                    '<h2><a href="'.TradeMeAssignGroupController::my_link().'">edit all categories</a></h2>'
+                )
+            ),
+            ReadonlyField::create(
+                'TradeMeLink2',
+                'Products',
+                DBField::create_field(
+                    'HTMLText',
+                    '<h2><a href="'.TradeMeAssignProductController::my_link().'?showvalue='.$groupID.'">edit products in '.$groupID.'</a></h2>'
+                )
+            ),
+            ReadonlyField::create(
+                'TradeMeLink3',
+                'Exprt',
+                DBField::create_field(
+                    'HTMLText',
+                    '<h2><a href="dev/tasks/'.Config::inst()->get('TradeMeAssignGroupController', 'create_trademe_csv_task_class_name').'">Export to TradeMe</a></h2>'
+                )
+            ),
+        ];
+
     }
 }

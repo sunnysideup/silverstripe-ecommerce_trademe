@@ -33,8 +33,7 @@ class ResetTradeMeTask extends BuildTask
     {
         increase_time_limit_to(600);
         foreach(['', '_Live'] as $extension) {
-            DB::query('Update "Product'.$extension.'" SET TradeMeCategoryID = 0, AlwaysShowOnTradeMe = 0');
-            DB::query('Update "ProductGroup'.$extension.'" SET TradeMeCategoryID = 0, ListProductsOnTradeMe = \'some\'');
+            DB::query('Update "Product'.$extension.'" SET ShowOnTradeMe = \'follow category\' WHERE ShowOnTradeMe !== \'always\' AND AlwaysShowOnTradeMe <> 1;');
         }
     }
 }

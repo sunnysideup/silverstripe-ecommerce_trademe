@@ -17,11 +17,7 @@ class ProductGroupTradeMeExtension extends DataExtension
         $fields->addFieldsToTab(
             'Root.TradeMe',
             [
-                new DropdownField(
-                    'TradeMeCategoryID',
-                    'Category',
-                    TradeMeCategories::get_categories()
-                ),
+
                 OptionsetField::create(
                     'ListProductsOnTradeMe',
                     'List ' . $this->owner->Title . ' on TradeMe?',
@@ -29,10 +25,11 @@ class ProductGroupTradeMeExtension extends DataExtension
                 )->setDescription('
                     Careful - saving this will also change the value for any underlying categories.
                     <br />E.g. If you set this value for Vegetables, it will also apply to Brocoli'),
+                TradeMeCategories::categories_field(),
                 TradeMeCategories::calculated_categories_field($this->owner),
-                LiteralField::create('TradeMeLink1', '<h2><a href="'.TradeMeAssignGroupController::my_link().'">quick edit categories</a></h2>'),
-                LiteralField::create('TradeMeLink2', '<h2><a href="'.TradeMeAssignProductController::my_link().'?showvalue='.$this->owner->ID.'">quick edit products in this category</a></h2>')
             ]
+            +
+            TradeMeAssignGroupController::default_fields_for_model()
         );
 
 
@@ -63,23 +60,22 @@ class ProductGroupTradeMeExtension extends DataExtension
 
     public function updateChildGroupsForTradeMe()
     {
-        $newValue = null;
-        switch ($this->owner->ListProductsOnTradeMe) {
+        $myValue = $this->owner->ListProductsOnTradeMe;
+        switch ($myValue) {
             case 'none':
-                $newValue = 0;
-                break;
             case 'all':
-                $newValue = 1;
+                $hasUpdate = true;
                 break;
             case 'some':
             default:
                 //do nothing
+                $hasUpdate = false;
         }
-        if ($newValue !== null) {
+        if ($hasUpdate === true) {
             $children = ProductGroup::get()->filter(['ParentID' => $this->owner->ID]);
             foreach ($children as $child) {
-                if ($child->ListProductsOnTradeMe !== $this->owner->ListProductsOnTradeMe) {
-                    $child->ListProductsOnTradeMe = $this->owner->ListProductsOnTradeMe;
+                if ($child->ListProductsOnTradeMe !== $myValue) {
+                    $child->ListProductsOnTradeMe = $myValue;
                     $child->writeToStage('Stage');
                     $child->doPublish();
                 }

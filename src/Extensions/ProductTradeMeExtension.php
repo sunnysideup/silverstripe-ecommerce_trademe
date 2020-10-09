@@ -9,16 +9,23 @@ class ProductTradeMeExtension extends Extension
      */
     private static $db = [
         'TradeMeCategoryID' => 'Int',
-        'AlwaysShowOnTradeMe' => 'Boolean',
-        'IncludeOnTradeMe' => 'Boolean',
+        'ShowOnTradeMe' => 'Enum("follow category, always, never", "follow category")',
     ];
+
+    /**
+     * stadard SS declaration
+     * @var array
+     */
+    private static $has_one = [
+        'TradeMeImage' => 'Image',
+    ];
+
     /**
      * stadard SS declaration
      * @var array
      */
     private static $indexes = [
-        'AlwaysShowOnTradeMe' => true,
-        'IncludeOnTradeMe' => true,
+        'ShowOnTradeMe' => true
     ];
 
     /**
@@ -34,6 +41,18 @@ class ProductTradeMeExtension extends Extension
     private static $trade_me_intro = '';
 
     /**
+     *
+     * @var int
+     */
+    private static $trade_me_title_char_limit = 50;
+
+    /**
+     *
+     * @var int
+     */
+    private static $trade_me_title_description_limit = 2048;
+
+    /**
      * stadard SS method
      * @return FieldList
      */
@@ -42,35 +61,27 @@ class ProductTradeMeExtension extends Extension
         $fields->addFieldsToTab(
             'Root.TradeMe',
             [
-                CheckboxField::create(
-                    'AlwaysShowOnTradeMe',
-                    'Always show on TradeMe'
+                $listOptions = OptionSetField::create(
+                    'ShowOnTradeMe',
+                    'Always show on TradeMe',
+                    $this->owner->dbObject('ShowOnTradeMe')->enumValues()
                 ),
-                DropdownField::create(
-                    'TradeMeCategoryID',
-                    'TradeMe Category',
-                    TradeMeCategories::get_categories()
-                ),
+                TradeMeCategories::categories_field(),
                 TradeMeCategories::calculated_categories_field($this->owner),
-                LiteralField::create('TradeMeLink1', '<h2><a href="'.TradeMeAssignGroupController::my_link().'">quick edit categories</a></h2>'),
-                LiteralField::create('TradeMeLink2', '<h2><a href="'.TradeMeAssignProductController::my_link().'?showvalue='.$this->owner->ParentID.'">quick edit products in this category</a></h2>')
-
+                UploadField::create('TradeMeImage', 'TradeMeImage')
+                    ->setDescription('Recommended is a minimum size of 800px wide by 600px high.')
             ]
+            +
+            TradeMeAssignGroupController::default_fields_for_model()
         );
         $parent = $this->owner->Parent();
         if($parent && $parent->exists()) {
-            $fields->addFieldToTab(
-                "Root.TradeMe",
-                (new CheckboxField('IncludeOnTradeMe', 'Show on TradeMe'))
-                    ->setDescription('
-                        If the parent category ('.$parent->Title.') is set to "SOME"
-                        then checking this box will ensure the product is shown on TradeMe.
-                        <br />Currently <strong>'.$parent->Title.'</strong> it is set to include <strong>'.strtoupper($parent->ListProductsOnTradeMe).'</strong> of its products.
-                    '),
-                'TradeMeCategoryID'
-            );
+            $listOptions->setDescription('
+                Currently this product\'s main category <strong>'.$parent->Title.'</strong>
+                it is set to include include <strong>'.strtoupper($parent->ListProductsOnTradeMe).'</strong>
+                if its products.
+            ');
         }
-        return $fields;
     }
 
     /**
@@ -95,14 +106,6 @@ class ProductTradeMeExtension extends Extension
         }
 
         return 0;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isTradeMeProduct(): bool
-    {
-        return $this->owner->AlwaysShowOnTradeMe || $this->owner->getCalculatedTradeMeCategory() ? true : false;
     }
 
     /**
@@ -135,7 +138,7 @@ class ProductTradeMeExtension extends Extension
         $result = $this->owner->Title;
         $result = str_replace('&', ' and ', $result);
         if ($checkLimit) {
-            $limit = 50;
+            $limit = $this->Config()->get('trade_me_title_char_limit');
             $result = substr($result, 0, $limit);
         }
         return (string) $result;
@@ -150,14 +153,30 @@ class ProductTradeMeExtension extends Extension
     {
         $intro = EcommerceDBConfig::current_ecommerce_db_config()->TradeMeIntro;
         $content = $this->owner->Content;
+
+        //merge content
+        $items = array_filter([$intro, $content]);
+        $content = implode('<br /><br />', $items);
+
+        //replacers
         $content = str_replace('&', ' and ', $content);
-        $content = str_replace('</p>', '<br><br>', $content);
+        $content = str_replace('<p>', '<br />', $content);
+        $content = str_replace('</p>', '<br />', $content);
+
+        //strip tags
         $content = strip_tags($content, '<br><br />') ?: '';
-        $content = trim("${intro}<br /><br />" . ($content ?: ''));
+
+        //limit
         if ($checkLimit) {
-            $limit = 2048;
+            $limit = $limit = $this->Config()->get('trade_me_title_description_limit');
             $result = substr($content, 0, $limit);
         }
+
+        //trim
+        $result = trim($result);
+        $result = trim($result, '<br />');
+        $result = trim($result, '<br />');
+
         return (string) $result;
     }
 

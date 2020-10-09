@@ -37,25 +37,11 @@ class TradeMeAssignProductController extends TradeMeAssignGroupController
                     ''
                 )
             );
-            if($this->productGroup->ListProductsOnTradeMe === 'some') {
-                $this->potentiallyUnsetDefaulData['IncludeOnTradeMe'.$name] = false;
-                $fields->push(
-                    // OptionsetFieldyyy::create(
-                    //     'IncludeOnTradeMe'.$name,
-                    //     'Include on TradeMe if category is included'
-                    // )->setValue($product->IncludeOnTradeMe)
-                    CheckboxField::create(
-                        'IncludeOnTradeMe'.$name,
-                        'Send to TradeMe'
-                    )->setValue($product->IncludeOnTradeMe)
-                );
-            }
-            $this->potentiallyUnsetDefaulData['AlwaysShowOnTradeMe'.$name] = false;
             $fields->push(
                 CheckboxField::create(
-                    'AlwaysShowOnTradeMe'.$name,
-                    'Always send on TradeMe, irrespective of category setting'
-                )->setValue($product->AlwaysShowOnTradeMe)
+                    'ShowOnTradeMe'.$name,
+                    'Include on TradeMe?'
+                )->setValue($product->ShowOnTradeMe)
             );
             $fields->push(
                 LiteralField::create(
@@ -83,8 +69,7 @@ class TradeMeAssignProductController extends TradeMeAssignGroupController
         } else {
             $list = $list->filterAny(
                 [
-                    'IncludeOnTradeMe' => true,
-                    'AlwaysShowOnTradeMe' => true
+                    'ShowOnTradeMe' => true
                 ]
             );
         }
@@ -142,9 +127,9 @@ class TradeMeAssignProductController extends TradeMeAssignGroupController
                             $updateCount++;
                         }
                     }
-                    if(isset($array[0]) && $array[0] === 'AlwaysShowOnTradeMe') {
-                        if((bool) $product->AlwaysShowOnTradeMe !== (bool) $value) {
-                            $product->AlwaysShowOnTradeMe = $value;
+                    if(isset($array[0]) && $array[0] === 'ShowOnTradeMe') {
+                        if($product->ShowOnTradeMe !== $value) {
+                            $product->ShowOnTradeMe = $value;
                             $product->writeToStage('Stage');
                             $product->publish('Stage', 'Live');
                             $updateCount++;

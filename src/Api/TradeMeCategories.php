@@ -30,6 +30,14 @@ class TradeMeCategories extends Object
         return $array[$categoryID] ?? 'unknown category';
     }
 
+    public static function categories_field()
+    {
+        return new DropdownField(
+            'TradeMeCategoryID',
+            'TradeMe Category',
+            TradeMeCategories::get_categories()
+        );
+    }
     public static function calculated_categories_field($object)
     {
         $calculatedCategory = $object->getCalculatedTradeMeCategory();
@@ -39,10 +47,11 @@ class TradeMeCategories extends Object
                 'Calculated Category',
                 self::get_title_from_id($calculatedCategory)
             )->setDescription('
-                    The TradeMe Category for this group is set by one of the parent Product Groups
+                    The TradeMe Category for this Category/Product is set by one of the parent Product Categories.
                 ');
+        } else {
+            return HiddenField::create('CalculatedCategory');
         }
-        return HiddenField::create('CalculatedCategory');
     }
 
     public static function get_trade_me_categories()
