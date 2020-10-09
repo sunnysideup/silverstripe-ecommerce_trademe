@@ -24,6 +24,9 @@ class TradeMeCategories extends Object
     public static function get_title_from_id($categoryID): string
     {
         $array = self::get_categories();
+        if(! $categoryID) {
+            $categoryID = Config::inst()->get('TradeMeCategories', 'trade_me_default');
+        }
         return $array[$categoryID] ?? 'unknown category';
     }
 
@@ -36,7 +39,7 @@ class TradeMeCategories extends Object
                 'Calculated Category',
                 self::get_title_from_id($calculatedCategory)
             )->setDescription('
-                    The Trade Me Category for this group is set by one of the parent Product Groups
+                    The TradeMe Category for this group is set by one of the parent Product Groups
                 ');
         }
         return HiddenField::create('CalculatedCategory');

@@ -10,25 +10,16 @@
         body {
             font-family: sans-serif;
             background-color: lightgrey;
+            padding: 0;
+            margin: 0;
         }
 
-        body a {
-            color: green;
-            text-decoration: none;
-        }
-
-        body a:visited {
-            color: darkgreen;
-        }
 
         /* Lines of each data point */
-        .middleColumn {
-            padding: 2px;
-        }
 
         /* Main form found at bottom */
         .form-holder-trade-me  {
-            padding: 2vh 2vw;
+            padding: calc(2vh + 2vw);
             margin-top: 60px;
         }
 
@@ -39,10 +30,12 @@
 
         .form-holder-trade-me fieldset {
             border: none!important;
+            margin: 0;
+            padding: 0;
         }
 
         .form-holder-trade-me .field {
-            padding: 0.3vh 2vw ;
+            line-height: 1.7;
         }
 
         .form-holder-trade-me .Actions {
@@ -62,10 +55,15 @@
             background-color: black;
             padding: 0.5em;
         }
-
+        .form-holder-trade-me #Form_Form_error {
+            background-color: yellow!important;
+            color: red!important;
+            width: 200px;
+            left: auto;
+        }
         /* Button found at bottom */
         .form-holder-trade-me .Actions input {
-            width: 200px;
+            padding: 0 30px;
             height: 30px;
             /* padding: 10px; */
             display: inline-block;
@@ -91,12 +89,50 @@
             /* color: purple; */
             /* background-color: purple; */
         }
+        form a {
+            color: green;
+            text-decoration: none;
+        }
+
+        form a:visited {
+            color: darkgreen;
+        }
 
         /* Pencil icon */
         .form-holder-trade-me span.description a {
             /* text-decoration: none; */
-            font-size: 2em;
+            font-size: calc(2vh + 2vw);
         }
-
+        .inline-links {
+            position: fixed;
+            left: calc(2vh + 2vw);
+            top: calc(1vh + 1vw);
+        }
+        .inline-links,
+        .inline-links li,
+        .inline-links li a {
+            display: inline-block;
+            margin: 0;
+            padding: 0;
+            color: #fff;
+        }
+        label.left {
+            float: left;
+            margin-right: calc(0.5vh + 0.5vw);
+        }
+        .field {
+            clear: both;
+        }
+        .middleColumn {
+            display: inline-block;
+        }
+        label.right {
+            float: right;
+        }
+        .checkbox label.right {
+            float: none;
+        }
+        a {text-decoration: underline}
+        a.current, a:hover {text-decoration: none;color: orange!important;}
     </style>
 </head>

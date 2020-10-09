@@ -47,7 +47,7 @@ class CreateTradeMeCSVTask extends BuildTask
         increase_time_limit_to(600);
         $this->debug = empty($_GET['details']) ? false : true;
         if(! $this->debug) {
-            echo '<h1>Add ?details=1 to your URL to see all the details on screen...</h1>';
+            echo '<h4>Add ?details=1 to your URL to see all the details on screen...</h4>';
         }
         //get details
         $pathToFile = ExportToTradeMeTask::file_location();
@@ -56,7 +56,7 @@ class CreateTradeMeCSVTask extends BuildTask
         file_put_contents($pathToFile, $data);
         echo '<h1><a href="'.ExportToTradeMeTask::url_location().'">Download Results</a></h1>';
         if(Director::isLive()) {
-            echo '<h1><a href="/dev/tasks/ExportToTradeMeTask/">Export data to to TradeMe</a></h1>';
+            echo '<h1>NEXT: <a href="/dev/tasks/ExportToTradeMeTask/">Export data to to TradeMe</a></h1>';
         }
     }
 

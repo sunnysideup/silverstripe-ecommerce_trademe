@@ -31,7 +31,7 @@ class ProductGroupTradeMeExtension extends DataExtension
                     <br />E.g. If you set this value for Vegetables, it will also apply to Brocoli'),
                 TradeMeCategories::calculated_categories_field($this->owner),
                 LiteralField::create('TradeMeLink1', '<h2><a href="'.TradeMeAssignGroupController::my_link().'">quick edit categories</a></h2>'),
-                LiteralField::create('TradeMeLink2', '<h2><a href="'.TradeMeAssignProductController::my_link().'">quick edit products</a></h2>')
+                LiteralField::create('TradeMeLink2', '<h2><a href="'.TradeMeAssignProductController::my_link().'?showvalue='.$this->owner->ID.'">quick edit products in this category</a></h2>')
             ]
         );
 

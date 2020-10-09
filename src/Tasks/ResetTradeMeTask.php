@@ -14,7 +14,7 @@ class ResetTradeMeTask extends BuildTask
     /**
      * @inherit
      */
-    protected $title = 'Reset All Trade Me Details';
+    protected $title = 'Reset All TradeMe Details';
 
     /**
      * @inherit

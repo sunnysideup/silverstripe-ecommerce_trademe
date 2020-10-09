@@ -1,7 +1,7 @@
 {
     "name": "sunnysideup/ecommerce_trademe",
     "type": "silverstripe-module",
-    "description": "Upload your silverstripe e-commerce products to Trade Me (New Zealand version of E-Bay and the like).",
+    "description": "Upload your silverstripe e-commerce products to TradeMe (New Zealand version of E-Bay and the like).",
     "keywords": [
         "Silverstripe-CMS",
         "CMS",

@@ -1,26 +1,15 @@
 <?php
 
-class TradeMeAssignProductController extends Controller
+class TradeMeAssignProductController extends TradeMeAssignGroupController
 {
+    /**
+     * @var string
+     */
+    private static $url_segment = 'set-trade-me-products';
 
+    private static $product_filter = [];
 
-	/**
-	 * @var string
-	 */
-	private static $url_segment = 'set-trade-me-products';
-
-    private static $allowed_actions = [
-        'index' => 'ADMIN',
-        'save' => 'ADMIN',
-        'Form' => 'ADMIN',
-    ];
-
-    private static $filter = [];
-
-	/**
-	 * @var string
-	 */
-	private static $menu_title = 'Trade Me Products';
+    private static $template = 'TradeMeAssignProductController_Content';
 
     public function init()
     {
@@ -30,63 +19,42 @@ class TradeMeAssignProductController extends Controller
         }
     }
 
-    public function index($request)
-    {
-        return $this->renderWith('TradeMeAssignProductController_Content');
-    }
-
-    public function Link($action = null) {
-		return Controller::join_links(Director::baseURL(), $this->RelativeLink($action));
-	}
-
-
-    public function RelativeLink($action = null)
-    {
-        return self::my_link($action);
-    }
-
-    public static function my_link($action = null)
-    {
-        return Controller::join_links(self::$url_segment, $action);
-    }
+    protected $potentiallyUnsetDefaulData = [];
 
     public function Form()
     {
         $fields = new FieldList();
-        $list = Product::get()->filterAny(
-			[
-				'IncludeOnTradeMe' => true,
-				'AlwaysShowOnTradeMe' => true
-			]
-		);
-
+        $list = $this->getListForForm();
         foreach ($list as $product) {
             $name = '___PRODUCT___'.$product->ID;
             $fields->push(
                 ReadonlyField::create(
                     'HEADER'.$name,
-                    '',
-                    $product->Breadcrumbs()
-                )->setDescription('
-                    <a href="'.$product->CMSEditLink().'">✎</a>'
+                    '<a href="'.$product->Link().'">✎</a>',
+                    DBField::create_field('HTMLText', '<a href="'.$product->CMSEditLink().'">'.$product->Title.'</a>')
+                )->setRightTitle(
+                    '» ' . TradeMeCategories::get_title_from_id($product->getCalculatedTradeMeCategory()).
+                    ''
                 )
             );
+            if($this->productGroup->ListProductsOnTradeMe === 'some') {
+                $this->potentiallyUnsetDefaulData['IncludeOnTradeMe'.$name] = false;
+                $fields->push(
+                    // OptionsetFieldyyy::create(
+                    //     'IncludeOnTradeMe'.$name,
+                    //     'Include on TradeMe if category is included'
+                    // )->setValue($product->IncludeOnTradeMe)
+                    CheckboxField::create(
+                        'IncludeOnTradeMe'.$name,
+                        'Send to TradeMe'
+                    )->setValue($product->IncludeOnTradeMe)
+                );
+            }
+            $this->potentiallyUnsetDefaulData['AlwaysShowOnTradeMe'.$name] = false;
             $fields->push(
-                // OptionsetFieldyyy::create(
-                //     'IncludeOnTradeMe'.$name,
-                //     'Include on TradeMe if category is included'
-                // )->setValue($product->IncludeOnTradeMe)
-                OptionsetField::create(
-                    'IncludeOnTradeMe'.$name,
-                    'Include on TradeMe if category is included',
-					[0 => 'no', 1 => 'yes']
-                )->setValue($product->IncludeOnTradeMe)
-            );
-            $fields->push(
-                OptionsetField::create(
+                CheckboxField::create(
                     'AlwaysShowOnTradeMe'.$name,
-                    'Always show on TradeMe',
-					[0 => 'no', 1 => 'yes']
+                    'Always send on TradeMe, irrespective of category setting'
                 )->setValue($product->AlwaysShowOnTradeMe)
             );
             $fields->push(
@@ -98,22 +66,65 @@ class TradeMeAssignProductController extends Controller
         }
 
         $actions = new FieldList(
-            FormAction::create('save', 'Update')
+            FormAction::create('save', 'Save Changes'),
+            FormAction::create('saveandexport', 'Save and Start Upload Process ...')
         );
-
+        $fields->push(HiddenField::create('showvalue')->setValue($this->showValue));
         $form = new Form($this, 'Form', $fields, $actions);
 
         return $form;
     }
 
+    protected function getListForForm():DataList
+    {
+        $list = TradeMeAssignProductController::base_list();
+        if($this->showValue) {
+            $list = $list->filter(['ParentID' => $this->showValue]);
+        } else {
+            $list = $list->filterAny(
+                [
+                    'IncludeOnTradeMe' => true,
+                    'AlwaysShowOnTradeMe' => true
+                ]
+            );
+        }
+
+        return $list;
+    }
+
+    public static function base_list() :DataList
+    {
+        $list = Product::get()->filter(['AllowPurchase' => true]);
+        $filter = Config::inst()->get('TradeMeAssignProductController', 'product_filter');
+        if(! empty($filter)) {
+            $list = $list->filter($filter);
+        }
+
+        return $list;
+    }
+
+    public function getProductGroup()
+    {
+        return $this->productGroup;
+    }
+
+    protected function setShowValue()
+    {
+        $this->showValue = intval($this->request->requestVar('showvalue'));
+        $this->productGroup = ProductGroup::get()->byID($this->showValue);
+        if(! $this->productGroup) {
+            return $this->httpError(404, 'Could not find category with ID = '.$this->showValue);
+        }
+    }
 
     public function Title()
     {
-        return 'Set Product Values';
+        return 'TradeMe Settings for "'.$this->productGroup->Title.'"';
     }
 
     public function save($data, $form)
     {
+        $data = array_merge($this->potentiallyUnsetDefaulData, $data);
         $updateCount = 0;
         foreach($data as $key => $value) {
             $array = explode('___', $key);
@@ -124,7 +135,7 @@ class TradeMeAssignProductController extends Controller
                 if($product) {
                     if(isset($array[0]) && $array[0] === 'IncludeOnTradeMe') {
                         $value = intval($value);
-                        if($product->IncludeOnTradeMe !== $value) {
+                        if( (bool)$product->IncludeOnTradeMe !== (bool) $value) {
                             $product->IncludeOnTradeMe = $value;
                             $product->writeToStage('Stage');
                             $product->publish('Stage', 'Live');
@@ -132,7 +143,7 @@ class TradeMeAssignProductController extends Controller
                         }
                     }
                     if(isset($array[0]) && $array[0] === 'AlwaysShowOnTradeMe') {
-                        if($product->AlwaysShowOnTradeMe !== $value) {
+                        if((bool) $product->AlwaysShowOnTradeMe !== (bool) $value) {
                             $product->AlwaysShowOnTradeMe = $value;
                             $product->writeToStage('Stage');
                             $product->publish('Stage', 'Live');
@@ -144,6 +155,7 @@ class TradeMeAssignProductController extends Controller
                 }
             }
         }
+
         if ($updateCount) {
             $form->sessionMessage('Updated '.$updateCount . ' fields.', 'good');
         }

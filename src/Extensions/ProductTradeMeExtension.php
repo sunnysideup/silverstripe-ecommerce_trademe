@@ -44,26 +44,27 @@ class ProductTradeMeExtension extends Extension
             [
                 CheckboxField::create(
                     'AlwaysShowOnTradeMe',
-                    'Always show on Trade Me'
+                    'Always show on TradeMe'
                 ),
                 DropdownField::create(
                     'TradeMeCategoryID',
-                    'Trade Me Category',
+                    'TradeMe Category',
                     TradeMeCategories::get_categories()
                 ),
                 TradeMeCategories::calculated_categories_field($this->owner),
                 LiteralField::create('TradeMeLink1', '<h2><a href="'.TradeMeAssignGroupController::my_link().'">quick edit categories</a></h2>'),
-                LiteralField::create('TradeMeLink2', '<h2><a href="'.TradeMeAssignProductController::my_link().'">quick edit products</a></h2>')
+                LiteralField::create('TradeMeLink2', '<h2><a href="'.TradeMeAssignProductController::my_link().'?showvalue='.$this->owner->ParentID.'">quick edit products in this category</a></h2>')
+
             ]
         );
         $parent = $this->owner->Parent();
         if($parent && $parent->exists()) {
             $fields->addFieldToTab(
                 "Root.TradeMe",
-                (new CheckboxField('IncludeOnTradeMe', 'Show on Trade Me'))
+                (new CheckboxField('IncludeOnTradeMe', 'Show on TradeMe'))
                     ->setDescription('
                         If the parent category ('.$parent->Title.') is set to "SOME"
-                        then checking this box will ensure the product is shown on Trade Me.
+                        then checking this box will ensure the product is shown on TradeMe.
                         <br />Currently <strong>'.$parent->Title.'</strong> it is set to include <strong>'.strtoupper($parent->ListProductsOnTradeMe).'</strong> of its products.
                     '),
                 'TradeMeCategoryID'
@@ -72,11 +73,21 @@ class ProductTradeMeExtension extends Extension
         return $fields;
     }
 
+    /**
+     * looks at TradeMe Category from the product itself
+     * and it not found goes up the line (parent , parent.parent, etc...)
+     * to find the applicable trade me category.
+     * @return int
+     */
     public function getCalculatedTradeMeCategory(): int
     {
         $parent = $this->owner;
         while ($parent) {
-            $id = $parent->TradeMeCategoryID;
+            if($parent instanceof ProductGroup) {
+                $id = $parent->getCalculatedTradeMeCategory();
+            } else {
+                $id = $parent->TradeMeCategoryID;
+            }
             if ($id) {
                 return $id;
             }
@@ -113,7 +124,13 @@ class ProductTradeMeExtension extends Extension
         return $categoryID;
     }
 
-    public function getTradeMeTitle($checkLimit = true)
+    /**
+     * returns the title of the product for TradeMe.
+     *
+     * @param  boolean $checkLimit
+     * @return string
+     */
+    public function getTradeMeTitle(?bool $checkLimit = true) : string
     {
         $result = $this->owner->Title;
         $result = str_replace('&', ' and ', $result);
@@ -121,10 +138,15 @@ class ProductTradeMeExtension extends Extension
             $limit = 50;
             $result = substr($result, 0, $limit);
         }
-        return $result;
+        return (string) $result;
     }
 
-    public function getTradeMeContent($checkLimit = true)
+    /**
+     *
+     * @param  boolean $checkLimit
+     * @return string
+     */
+    public function getTradeMeContent(?bool $checkLimit = true) : string
     {
         $intro = EcommerceDBConfig::current_ecommerce_db_config()->TradeMeIntro;
         $content = $this->owner->Content;
@@ -136,7 +158,7 @@ class ProductTradeMeExtension extends Extension
             $limit = 2048;
             $result = substr($content, 0, $limit);
         }
-        return $result;
+        return (string) $result;
     }
 
 }

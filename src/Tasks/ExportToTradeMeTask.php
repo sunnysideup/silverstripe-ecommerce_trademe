@@ -49,6 +49,6 @@ class ExportToTradeMeTask extends BuildTask
     }
     public static function  url_location()
     {
-        return str_replace(Director::baseFolder(), Director::absoluteURL('/'), self::file_location());
+        return str_replace(Director::baseFolder() .'/', Director::absoluteURL('/'), self::file_location());
     }
 }
