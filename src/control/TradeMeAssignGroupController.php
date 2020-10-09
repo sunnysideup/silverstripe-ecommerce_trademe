@@ -16,7 +16,7 @@ class TradeMeAssignGroupController extends Controller
         'Form' => 'ADMIN',
     ];
 
-    private static $create_trademe_csv_task_class_name = CreateTradeMeCSVTask::class;
+    private static $create_trademe_csv_task_class_name = CreateTradeMeCsvTask::class;
 
     private static $group_filter = [];
 
