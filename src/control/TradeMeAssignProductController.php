@@ -5,19 +5,11 @@ class TradeMeAssignProductController extends TradeMeAssignGroupController
     /**
      * @var string
      */
-    private static $url_segment = 'set-trade-me-products';
+    private static $url_segment = 'admin/set-trade-me-products';
 
     private static $product_filter = [];
 
     private static $template = 'TradeMeAssignProductController_Content';
-
-    public function init()
-    {
-        parent::init();
-        if(!Permission::check('ADMIN')) {
-            return Security::permissionFailure($this);
-        }
-    }
 
     protected $potentiallyUnsetDefaulData = [];
 
@@ -38,9 +30,10 @@ class TradeMeAssignProductController extends TradeMeAssignGroupController
                 )
             );
             $fields->push(
-                CheckboxField::create(
+                OptionSetField::create(
                     'ShowOnTradeMe'.$name,
-                    'Include on TradeMe?'
+                    'Include on TradeMe?',
+                    $this->getListProductsOnTradeMeOptions()
                 )->setValue($product->ShowOnTradeMe)
             );
             $fields->push(
@@ -51,25 +44,39 @@ class TradeMeAssignProductController extends TradeMeAssignGroupController
             );
         }
 
-        $actions = new FieldList(
-            FormAction::create('save', 'Save Changes'),
-            FormAction::create('saveandexport', 'Save and Start Upload Process ...')
-        );
-        $fields->push(HiddenField::create('showvalue')->setValue($this->showValue));
+        foreach($this->getHiddenFields() as $hiddenField) {
+            $fields->push($hiddenField);
+        }
+
+        $actions = $this->getFormActions();
+
         $form = new Form($this, 'Form', $fields, $actions);
 
         return $form;
     }
 
-    protected function getListForForm():DataList
+    protected function getListProductsOnTradeMeOptions() : array
+    {
+        return DataObject::get_one(Product::class)->dbObject('ShowOnTradeMe')->enumValues();
+    }
+
+    protected function getListForFormInner():DataList
     {
         $list = TradeMeAssignProductController::base_list();
-        if($this->showValue) {
-            $list = $list->filter(['ParentID' => $this->showValue]);
-        } else {
-            $list = $list->filterAny(
+        if ($this->getParams['parentid']) {
+            $list = $list->filter(['ParentID' => $this->getParams['parentid']]);
+        }
+        if ($this->getParams['filter']) {
+            $list = $list->filter(
                 [
-                    'ShowOnTradeMe' => true
+                    'ShowOnTradeMe' => $this->getParams['filter']
+                ]
+            );
+        }
+        if(! ($this->getParams['parentid'] || $this->getParams['filter'])) {
+            $list = $list->filter(
+                [
+                    'ShowOnTradeMe' => 'always'
                 ]
             );
         }
@@ -95,10 +102,14 @@ class TradeMeAssignProductController extends TradeMeAssignGroupController
 
     protected function setShowValue()
     {
-        $this->showValue = intval($this->request->requestVar('showvalue'));
-        $this->productGroup = ProductGroup::get()->byID($this->showValue);
-        if(! $this->productGroup) {
-            return $this->httpError(404, 'Could not find category with ID = '.$this->showValue);
+        $this->getParams['parentid'] = intval($this->request->requestVar('parentid'));
+        $this->productGroup = ProductGroup::get()->byID($this->getParams['parentid']);
+        if($this->getParams['parentid'] && ! $this->productGroup) {
+            return $this->httpError(404, 'Could not find category with ID = '.$this->getParams['parentid']);
+        }
+        $this->getParams['filter'] = intval($this->request->requestVar('showvaluefilter'));
+        if($this->getParams['filter'] && ! in_array($this->getParams['filter'], $this->getListProductsOnTradeMeOptions(), true)) {
+            return $this->httpError(404, 'Could not find a filter: '.$this->getParams['filter']);
         }
     }
 
@@ -146,6 +157,6 @@ class TradeMeAssignProductController extends TradeMeAssignGroupController
         }
 
         return $this->redirectBack();
-
     }
+
 }

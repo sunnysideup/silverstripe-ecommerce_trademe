@@ -102,7 +102,7 @@ class CreateTradeMeCsvTask extends BuildTask
         $categoryListings = [];
         $countForReal = 0;
 
-        $products =  PhotographicProduct::get()
+        $products =  TradeMeAssignProductController::base_list()
             ->filter(['ID' => $this->getIDsOfProducts()])
             ->sort('InternalItemID');
         DB::alteration_message('There are ' . $products->count() . ' potential products to be listed on TradeMe.', 'created');

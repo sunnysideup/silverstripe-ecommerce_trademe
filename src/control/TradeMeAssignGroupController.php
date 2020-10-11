@@ -1,19 +1,20 @@
 <?php
 
-class TradeMeAssignGroupController extends Controller
+class TradeMeAssignGroupController extends Controller implements PermissionProvider
 {
+
 
 
     /**
      * @var string
      */
-    private static $url_segment = 'set-trade-me-categories';
+    private static $url_segment = 'admin/set-trade-me-categories';
 
     private static $allowed_actions = [
-        'index' => 'ADMIN',
-        'save' => 'ADMIN',
-        'saveandexport' => 'ADMIN',
-        'Form' => 'ADMIN',
+        'index' => 'CMS_ACCESS_TRADE_ME',
+        'save' => 'CMS_ACCESS_TRADE_ME',
+        'saveandexport' => 'CMS_ACCESS_TRADE_ME',
+        'Form' => 'CMS_ACCESS_TRADE_ME',
     ];
 
     private static $create_trademe_csv_task_class_name = CreateTradeMeCsvTask::class;
@@ -25,7 +26,7 @@ class TradeMeAssignGroupController extends Controller
     public function init()
     {
         parent::init();
-        if(!Permission::check('ADMIN')) {
+        if ( !Permission::check('CMS_ACCESS_TRADE_ME')) {
             return Security::permissionFailure($this);
         }
         $this->setShowValue();
@@ -36,45 +37,59 @@ class TradeMeAssignGroupController extends Controller
         return $this->renderWith($this->Config()->get('template'));
     }
 
-    protected $showValue = '';
+    protected $getParams = '';
 
     protected function getListProductsOnTradeMeOptions() : array
     {
-        return ProductGroup::get()->first()->dbObject('ListProductsOnTradeMe')->enumValues();
+        return DataObject::get_one(ProductGroup::class)->dbObject('ListProductsOnTradeMe')->enumValues();
     }
 
     protected function setShowValue()
     {
-        $this->showValue = $this->request->requestVar('showvalue');
-        if($this->showValue) {
+        $this->getParams = $this->request->requestVars;
+        if(! empty($this->getParams['filter'])) {
             $options = $this->getListProductsOnTradeMeOptions();
-            if(! in_array($this->showValue, $options)) {
-                $this->showValue = '';
+            if(! in_array($this->getParams['filter'], $options)) {
+                $this->getParams['filter'] = '';
                 return $this->httpError('404', 'Category does not exist');
             }
         }
     }
 
     public function Link($action = null) {
-        return Controller::join_links(Director::baseURL(), $this->RelativeLink($action));
+        return Director::absoluteURL($this->RelativeLink($action));
     }
-
 
     public function RelativeLink($action = null)
     {
-        return self::my_link($action);
+        return self::my_link($action, $this->getParams);
     }
 
-    public static function my_link($action = null)
+    public static function my_link($action = null, $getParams = [])
     {
-        return '/' . Controller::join_links(Config::inst()->get(get_called_class(), 'url_segment'), $action);
+        $link = '/' . Controller::join_links(Config::inst()->get(get_called_class(), 'url_segment'), $action);
+        $array = array_filter($getParams);
+        if(! empty($array)) {
+            $link = '?' . implode('&amp;', $array);
+        }
+
+        return $link;
+
     }
 
-    protected function getListForForm()
+    public function getListForForm():PaginatedList
+    {
+        return PaginatedList(
+            $this->getListForFormInner(),
+            $this->getRequest()
+        );
+    }
+
+    protected function getListForFormInner():DataList
     {
         $list = TradeMeAssignGroupController::base_list();
-        if($this->showValue) {
-            $list = $list->filter(['ListProductsOnTradeMe' => $this->showValue]);
+        if($this->getParams['filter']) {
+            $list = $list->filter(['ListProductsOnTradeMe' => $this->getParams['filter']]);
         }
         return $list;
     }
@@ -100,7 +115,7 @@ class TradeMeAssignGroupController extends Controller
             $productList = $productList->filter(['ParentID' => $group->ID]);
             $productCount = $productList->count();
             if($productCount){
-                $productLink = TradeMeAssignProductController::my_link().'?showvalue='.$group->ID;
+                $productLink = TradeMeAssignProductController::my_link().'?parentid='.$group->ID;
                 $name = '___GROUP___'.$group->ID;
                 $breadcrumb = $group->Breadcrumbs();
                 $breadcrumbRaw = $breadcrumb->RAW();
@@ -135,17 +150,36 @@ class TradeMeAssignGroupController extends Controller
         foreach($fieldListSortable as $fieldListSortableField) {
             $fields->push($fieldListSortableField);
         }
-        $actions = new FieldList(
-            FormAction::create('save', 'Save Changes'),
-            FormAction::create('saveandexport', 'Save and Start Upload Process ...')
-        );
-        $fields->push(HiddenField::create('showvalue')->setValue($this->showValue));
+
+        foreach($this->getHiddenFields() as $hiddenField) {
+            $fields->push($hiddenField);
+        }
+
+        $actions = $this->getFormActions();
 
         $form = new Form($this, 'Form', $fields, $actions);
 
         return $form;
     }
 
+    protected function getFormActions() : FieldList
+    {
+        return new FieldList(
+            FormAction::create('save', 'Save Changes'),
+            FormAction::create('saveandexport', 'Save and Start Upload Process ...')
+        );
+    }
+
+
+    protected function getHiddenFields() : array
+    {
+        $arrayOfFields = [];
+        $array = array_filter($this->getParams);
+        foreach(array_keys($array) as $keys) {
+            $arrayOfFields[] = HiddenField::create($key)->setValue($this->getParams[$key]);
+        }
+        return $arrayOfFields;
+    }
 
     public function Title()
     {
@@ -195,45 +229,36 @@ class TradeMeAssignGroupController extends Controller
     public function getFilterLinks() :ArrayList
     {
         $al =  ArrayList::create();
+        $array = [
+            'Link' => $this->Link(),
+            'LinkingMode' => $this->getParams['filter'] ? 'link' : 'current',
+            'Title' => 'No Filter',
+        ];
+        $al->push(ArrayData::create($array));
+
+        $filter = $this->getParams['filter'];
+        unset($this->getParams['filter']);
         foreach($this->getListProductsOnTradeMeOptions() as $option) {
             $array = [
-                'Link' => $this->Link().'?showvalue=' . $option,
-                'LinkingMode' => $this->showValue === $option ? 'current' : 'link',
-                'Title' => ucfirst($option)
+                'Link' => $this->addLinkParameters($this->Link().'?filter=' . $option),
+                'LinkingMode' => $this->getParams['filter'] === $option ? 'current' : 'link',
+                'Title' => ucfirst($option),
             ];
             $al->push(ArrayData::create($array));
         }
+        $this->getParams['filter'] = $filter;
         return $al;
     }
 
-    public static function default_fields_for_model(?int $groupID = 0)
+
+    public function providePermissions() : array
     {
         return [
-            ReadonlyField::create(
-                'TradeMeLink1',
-                'Categories',
-                DBField::create_field(
-                    'HTMLText',
-                    '<h2><a href="'.TradeMeAssignGroupController::my_link().'">edit all categories</a></h2>'
-                )
-            ),
-            ReadonlyField::create(
-                'TradeMeLink2',
-                'Products',
-                DBField::create_field(
-                    'HTMLText',
-                    '<h2><a href="'.TradeMeAssignProductController::my_link().'?showvalue='.$groupID.'">edit products in '.$groupID.'</a></h2>'
-                )
-            ),
-            ReadonlyField::create(
-                'TradeMeLink3',
-                'Exprt',
-                DBField::create_field(
-                    'HTMLText',
-                    '<h2><a href="dev/tasks/'.Config::inst()->get('TradeMeAssignGroupController', 'create_trademe_csv_task_class_name').'">Export to TradeMe</a></h2>'
-                )
-            ),
+            "CMS_ACCESS_TRADE_ME" => [
+                'name' => 'Trade Me',
+                'category' => _t('Permission.CMS_ACCESS_CATEGORY', 'CMS Access'),
+                'help' => 'Export products to TradeMe',
+            ]
         ];
-
     }
 }

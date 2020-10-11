@@ -72,7 +72,7 @@ class ProductTradeMeExtension extends Extension
                     ->setDescription('Recommended is a minimum size of 800px wide by 600px high.')
             ]
             +
-            TradeMeAssignGroupController::default_fields_for_model()
+            TradeMeGenericCmsFieldsProvider::get_fields()
         );
         $parent = $this->owner->Parent();
         if($parent && $parent->exists()) {

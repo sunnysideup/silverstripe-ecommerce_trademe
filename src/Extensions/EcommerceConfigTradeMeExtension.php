@@ -16,8 +16,12 @@ class EcommerceConfigTradeMeExtension extends DataExtension
         //offline
         $fields->addFieldsToTab(
             'Root.TradeMe',
-            TextareaField::create('TradeMeIntro'),
-            LiteralField::create('TradeMeLink', '<h2><a href="'.TradeMeAssignGroupController::my_link().'">quick edit categories</a></h2>')
+            [
+                TextareaField::create('TradeMeIntro'),
+
+            ]
+            +
+            TradeMeGenericCmsFieldsProvider::get_fields()
         );
     }
 }
