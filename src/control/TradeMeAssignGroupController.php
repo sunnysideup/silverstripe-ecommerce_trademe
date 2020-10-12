@@ -29,7 +29,7 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
         if ( !Permission::check('CMS_ACCESS_TRADE_ME')) {
             return Security::permissionFailure($this);
         }
-        $this->setShowValue();
+        $this->setGetParams();
     }
 
     public function index($request)
@@ -37,16 +37,27 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
         return $this->renderWith($this->Config()->get('template'));
     }
 
-    protected $getParams = '';
+    protected $getParams = [];
+
+    protected $getParamsDefaults = [
+        'start' => 0,
+        'filter' => 0,
+        'parentid' => 0,
+    ];
 
     protected function getListProductsOnTradeMeOptions() : array
     {
         return DataObject::get_one(ProductGroup::class)->dbObject('ListProductsOnTradeMe')->enumValues();
     }
 
-    protected function setShowValue()
+    protected function setGetParams()
     {
-        $this->getParams = $this->request->requestVars;
+        $potentials = $this->request->requestVars();
+        foreach($this->getParamsDefaults as $key => $defaultValue) {
+            $newValue = $potentials[$key] ?? $defaultValue;
+            $this->getParams[$key] = $newValue;
+        }
+
         if(! empty($this->getParams['filter'])) {
             $options = $this->getListProductsOnTradeMeOptions();
             if(! in_array($this->getParams['filter'], $options)) {
@@ -57,7 +68,7 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
     }
 
     public function Link($action = null) {
-        return Director::absoluteURL($this->RelativeLink($action));
+        return Director::absoluteURL($this->RelativeLink($action), $this->getParams);
     }
 
     public function RelativeLink($action = null)
@@ -68,10 +79,8 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
     public static function my_link($action = null, $getParams = [])
     {
         $link = '/' . Controller::join_links(Config::inst()->get(get_called_class(), 'url_segment'), $action);
-        $array = array_filter($getParams);
-        if(! empty($array)) {
-            $link = '?' . implode('&amp;', $array);
-        }
+
+        $link .= '?' . http_build_query($getParams);
 
         return $link;
 
@@ -79,10 +88,13 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
 
     public function getListForForm():PaginatedList
     {
-        return PaginatedList(
+        $list = PaginatedList::create(
             $this->getListForFormInner(),
             $this->getRequest()
         );
+        $list->setPageLength(100);
+
+        return $list;
     }
 
     protected function getListForFormInner():DataList
@@ -115,7 +127,7 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
             $productList = $productList->filter(['ParentID' => $group->ID]);
             $productCount = $productList->count();
             if($productCount){
-                $productLink = TradeMeAssignProductController::my_link().'?parentid='.$group->ID;
+                $productLink = TradeMeAssignProductController::my_link('', ['parentid' => $group->ID]);
                 $name = '___GROUP___'.$group->ID;
                 $breadcrumb = $group->Breadcrumbs();
                 $breadcrumbRaw = $breadcrumb->RAW();
@@ -174,9 +186,8 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
     protected function getHiddenFields() : array
     {
         $arrayOfFields = [];
-        $array = array_filter($this->getParams);
-        foreach(array_keys($array) as $keys) {
-            $arrayOfFields[] = HiddenField::create($key)->setValue($this->getParams[$key]);
+        foreach($this->getParams as $key => $value) {
+            $arrayOfFields[] = HiddenField::create($key)->setValue($value);
         }
         return $arrayOfFields;
     }
@@ -229,24 +240,35 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
     public function getFilterLinks() :ArrayList
     {
         $al =  ArrayList::create();
+        //reset filter first ...
+        $currentStart = $this->getParams['start'] ?? 0;
+        $this->getParams['start'] = 0;
+        $currentFilter = $this->getParams['filter'] ?? '';
+        $this->getParams['filter'] = '';
+
+        // no filter
         $array = [
             'Link' => $this->Link(),
-            'LinkingMode' => $this->getParams['filter'] ? 'link' : 'current',
+            'LinkingMode' => $currentFilter ? 'link' : 'current',
             'Title' => 'No Filter',
         ];
         $al->push(ArrayData::create($array));
 
-        $filter = $this->getParams['filter'];
-        unset($this->getParams['filter']);
+        //loop through options
         foreach($this->getListProductsOnTradeMeOptions() as $option) {
+            $this->getParams['filter'] = $option;
             $array = [
-                'Link' => $this->addLinkParameters($this->Link().'?filter=' . $option),
-                'LinkingMode' => $this->getParams['filter'] === $option ? 'current' : 'link',
+                'Link' => $this->Link(),
+                'LinkingMode' => $option === $currentFilter ? 'current' : 'link',
                 'Title' => ucfirst($option),
             ];
             $al->push(ArrayData::create($array));
         }
-        $this->getParams['filter'] = $filter;
+
+        //set filter back
+        $this->getParams['start'] = $currentStart;
+        $this->getParams['filter'] = $currentFilter;
+
         return $al;
     }
 

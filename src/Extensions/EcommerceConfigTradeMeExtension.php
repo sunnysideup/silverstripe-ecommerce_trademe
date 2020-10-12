@@ -16,12 +16,13 @@ class EcommerceConfigTradeMeExtension extends DataExtension
         //offline
         $fields->addFieldsToTab(
             'Root.TradeMe',
-            [
-                TextareaField::create('TradeMeIntro'),
+            array_merge(
+                [
+                    TextareaField::create('TradeMeIntro'),
 
-            ]
-            +
-            TradeMeGenericCmsFieldsProvider::get_fields()
+                ],
+                TradeMeGenericCmsFieldsProvider::get_fields()
+            )
         );
     }
 }

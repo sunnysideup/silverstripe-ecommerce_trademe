@@ -1,3 +1,4 @@
+<div class="pagination">
 <% if $ListForForm.MoreThanOnePage %>
     <% if $ListForForm.NotFirstPage %>
         <a class="prev" href="$PaginatedPages.PrevLink">Prev</a>
@@ -17,3 +18,4 @@
         <a class="next" href="$ListForForm.NextLink">Next</a>
     <% end_if %>
 <% end_if %>
+</div>

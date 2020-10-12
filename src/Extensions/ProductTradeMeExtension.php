@@ -60,19 +60,20 @@ class ProductTradeMeExtension extends Extension
     {
         $fields->addFieldsToTab(
             'Root.TradeMe',
-            [
-                $listOptions = OptionSetField::create(
-                    'ShowOnTradeMe',
-                    'Always show on TradeMe',
-                    $this->owner->dbObject('ShowOnTradeMe')->enumValues()
-                ),
-                TradeMeCategories::categories_field(),
-                TradeMeCategories::calculated_categories_field($this->owner),
-                UploadField::create('TradeMeImage', 'TradeMeImage')
-                    ->setDescription('Recommended is a minimum size of 800px wide by 600px high.')
-            ]
-            +
-            TradeMeGenericCmsFieldsProvider::get_fields()
+            array_merge(
+                [
+                    $listOptions = OptionSetField::create(
+                        'ShowOnTradeMe',
+                        'Show on TradeMe?',
+                        $this->owner->dbObject('ShowOnTradeMe')->enumValues()
+                    ),
+                    TradeMeCategories::categories_field(),
+                    TradeMeCategories::calculated_categories_field($this->owner),
+                    UploadField::create('TradeMeImage', 'TradeMeImage')
+                        ->setDescription('Recommended is a minimum size of 800px wide by 600px high.')
+                ],
+                TradeMeGenericCmsFieldsProvider::get_fields($this->owner->Parent())
+            )
         );
         $parent = $this->owner->Parent();
         if($parent && $parent->exists()) {
@@ -102,7 +103,7 @@ class ProductTradeMeExtension extends Extension
             if ($id) {
                 return $id;
             }
-            $parent = ProductGroup::get()->byID($parent->ParentID);
+            $parent = ProductGroup::get()->byID($parent->owner->ParentID);
         }
 
         return 0;
@@ -138,7 +139,7 @@ class ProductTradeMeExtension extends Extension
         $result = $this->owner->Title;
         $result = str_replace('&', ' and ', $result);
         if ($checkLimit) {
-            $limit = $this->Config()->get('trade_me_title_char_limit');
+            $limit = Config::inst()->get('ProductTradeMeExtension', 'trade_me_title_char_limit');
             $result = substr($result, 0, $limit);
         }
         return (string) $result;
@@ -168,7 +169,7 @@ class ProductTradeMeExtension extends Extension
 
         //limit
         if ($checkLimit) {
-            $limit = $limit = $this->Config()->get('trade_me_title_description_limit');
+            $limit = $limit = Config::inst()->get('ProductTradeMeExtension', 'trade_me_title_description_limit');
             $result = substr($content, 0, $limit);
         }
 

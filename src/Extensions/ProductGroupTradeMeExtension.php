@@ -16,20 +16,20 @@ class ProductGroupTradeMeExtension extends DataExtension
     {
         $fields->addFieldsToTab(
             'Root.TradeMe',
-            [
-
-                OptionsetField::create(
-                    'ListProductsOnTradeMe',
-                    'List ' . $this->owner->Title . ' on TradeMe?',
-                    $this->owner->dbObject('ListProductsOnTradeMe')->enumValues()
-                )->setDescription('
-                    Careful - saving this will also change the value for any underlying categories.
-                    <br />E.g. If you set this value for Vegetables, it will also apply to Brocoli'),
-                TradeMeCategories::categories_field(),
-                TradeMeCategories::calculated_categories_field($this->owner),
-            ]
-            +
-            TradeMeGenericCmsFieldsProvider::get_fields()
+            array_merge(
+                [
+                    OptionsetField::create(
+                        'ListProductsOnTradeMe',
+                        'List ' . $this->owner->Title . ' on TradeMe?',
+                        $this->owner->dbObject('ListProductsOnTradeMe')->enumValues()
+                    )->setDescription('
+                        Careful - saving this will also change the value for any underlying categories.
+                        <br />E.g. If you set this value for Vegetables, it will also apply to Brocoli'),
+                    TradeMeCategories::categories_field(),
+                    TradeMeCategories::calculated_categories_field($this->owner),
+                ],
+                TradeMeGenericCmsFieldsProvider::get_fields($this->owner)
+            )
         );
 
 

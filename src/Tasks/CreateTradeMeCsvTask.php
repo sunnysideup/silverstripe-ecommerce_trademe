@@ -44,7 +44,7 @@ class CreateTradeMeCsvTask extends BuildTask
     /**
      * @var bool
      */
-    protected $enabled = false;
+    protected $enabled = true;
 
     /**
      * @inherit
@@ -71,6 +71,22 @@ class CreateTradeMeCsvTask extends BuildTask
      */
     protected $minImageHeight = 600;
 
+    protected $verbose = true;
+
+    public function setVerbose(bool $b)
+    {
+        $this->verbose = $b;
+
+        return  $this;
+    }
+
+    protected $html = '';
+
+    public function getHtml()
+    {
+        return $this->html;
+    }
+
     /**
      * Run
      */
@@ -79,16 +95,16 @@ class CreateTradeMeCsvTask extends BuildTask
         increase_time_limit_to(600);
         $this->debug = empty($_GET['details']) ? false : true;
         if(! $this->debug) {
-            echo '<h4>Add ?details=1 to your URL to see all the details on screen...</h4>';
+            $this->output('<h4>Add ?details=1 to your URL to see all the details on screen...</h4>');
         }
         //get details
         $pathToFile = ExportToTradeMeTask::file_location();
         $data = CsvFunctionality::convertToCSV($this->getData(), ',');
         //set file
         file_put_contents($pathToFile, $data);
-        echo '<h1><a href="'.ExportToTradeMeTask::url_location().'">Download Results</a></h1>';
+        $this->output('<h1><a href="'.ExportToTradeMeTask::url_location().'">Download Results</a></h1>');
         if(Director::isLive()) {
-            echo '<h1>NEXT: <a href="/dev/tasks/ExportToTradeMeTask/">Export data to to TradeMe</a></h1>';
+            $this->output('<h1>NEXT: <a href="/dev/tasks/ExportToTradeMeTask/">Export data to to TradeMe</a></h1>');
         }
     }
 
@@ -105,7 +121,7 @@ class CreateTradeMeCsvTask extends BuildTask
         $products =  TradeMeAssignProductController::base_list()
             ->filter(['ID' => $this->getIDsOfProducts()])
             ->sort('InternalItemID');
-        DB::alteration_message('There are ' . $products->count() . ' potential products to be listed on TradeMe.', 'created');
+        $this->output('There are ' . $products->count() . ' potential products to be listed on TradeMe.', 'good');
         foreach($products as $product) {
             $data = $product->getTradeMeData($this->fields);
             foreach($data['Data'] as $key => $value) {
@@ -115,28 +131,28 @@ class CreateTradeMeCsvTask extends BuildTask
                 if(empty($categoryListings[$data['TradeMeCategory']])) {
                     $categoryListings[$data['TradeMeCategory']] = [];
                 }
-                $categoryListings[$data['TradeMeCategory']][] = $product->InternalItemID.' - '.$product->Title;
+                $categoryListings[$data['TradeMeCategory']][] = '<a href="/'.$product->CMSEditLink().'">' . $product->InternalItemID.' - '.$product->Title . '</a>';
                 $countForReal++;
             }
             if(! empty($data['HasError'])) {
                 if(! isset($data['HasError'])) {
                     $data['HasError'] = 'Unknown Error';
                 }
-                DB::alteration_message('Error: '.$data['ErrorMessage'], 'deleted');
+                $this->output('Error: '.$data['ErrorMessage'], 'bad');
             }
             $array[] = $innerArray;
         }
 
-        DB::alteration_message('
+        $this->output('
             After review, there are ' . $countForReal . ' products that will actually be listed on TradeMe,
             The rest are out of stock or have some other issue.
             Below is a list by TradeMe Category.',
-            'created'
+            'orange'
         );
 
-        echo '<h1>By Category</h1>';
+        $this->output('<h1>By Category</h1>');
         ksort($categoryListings);
-        echo $this->arrayToHtml($categoryListings);
+        $this->output($this->arrayToHtml($categoryListings));
 
         return $array;
     }
@@ -160,9 +176,9 @@ class CreateTradeMeCsvTask extends BuildTask
             INNER JOIN
                 "SiteTree_Live" AS ParentSiteTree ON "ParentSiteTree"."ID" = "SiteTree_Live"."ParentID"
             INNER JOIN
-                "ProductGroup_Live" AS ParentProductGroup ON ParentSiteTree.ID = ParentProductGroup.ID
+                "ProductGroup_Live" AS ParentProductGroup ON "ParentSiteTree"."ID" = "ParentProductGroup"."ID"
             INNER JOIN
-                "Product_Live" AS Product ON "SiteTree_Live"."ID" = "Product_Live"."ID"
+                "Product_Live" AS Product ON "SiteTree_Live"."ID" = "Product"."ID"
             WHERE
                 "Product"."AllowPurchase" = 1 AND "Product"."ShowOnTradeMe" <> \'never\' AND "ParentProductGroup"."ListProductsOnTradeMe" <> \'none\'
                 AND (
@@ -175,7 +191,7 @@ class CreateTradeMeCsvTask extends BuildTask
         $rows = DB::query($sql);
         $array = [0];
         foreach($rows as $row) {
-            $array[row['ProductID']] = $row['ProductID'];
+            $array[$row['ProductID']] = $row['ProductID'];
         }
         return $array;
     }
@@ -231,7 +247,7 @@ class CreateTradeMeCsvTask extends BuildTask
         $html = '<ul>';
         foreach ( $array as $key => $value ) {
             if(is_array($value)) {
-                $html .= '<li>' . $key . ':' . $this->arrayToHtml($item) . '</li>';
+                $html .= '<li>' . $key . ':' . $this->arrayToHtml($value) . '</li>';
             } else {
                 $html .= '<li>' . $value . '</li>';
             }
@@ -239,6 +255,32 @@ class CreateTradeMeCsvTask extends BuildTask
         $html .= '</ul>';
 
         return $html;
+    }
+
+    protected function output(string $msg, ?string $style = '')
+    {
+        switch($style) {
+            case 'good':
+            case 'created':
+                $colour = 'green';
+                break;
+            case 'info':
+            case 'obsolete':
+                $colour = 'orange';
+                break;
+            case 'bad':
+            case 'deleted':
+                $colour = 'red';
+                break;
+            default:
+                $colour = 'black';
+        }
+        $msg = '<div style="color: '.$colour.';">'.$msg.'</div>';
+        if($this->verbose) {
+            echo $msg;
+        } else {
+            $this->html .= $msg;
+        }
     }
 
 }

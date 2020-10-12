@@ -11,7 +11,12 @@ class TradeMeAssignProductController extends TradeMeAssignGroupController
 
     private static $template = 'TradeMeAssignProductController_Content';
 
-    protected $potentiallyUnsetDefaulData = [];
+    private static $allowed_actions = [
+        'index' => 'CMS_ACCESS_TRADE_ME',
+        'save' => 'CMS_ACCESS_TRADE_ME',
+        'saveandexport' => 'CMS_ACCESS_TRADE_ME',
+        'Form' => 'CMS_ACCESS_TRADE_ME',
+    ];
 
     public function Form()
     {
@@ -100,16 +105,12 @@ class TradeMeAssignProductController extends TradeMeAssignGroupController
         return $this->productGroup;
     }
 
-    protected function setShowValue()
+    protected function setGetParams()
     {
-        $this->getParams['parentid'] = intval($this->request->requestVar('parentid'));
+        parent::setGetParams();
         $this->productGroup = ProductGroup::get()->byID($this->getParams['parentid']);
         if($this->getParams['parentid'] && ! $this->productGroup) {
             return $this->httpError(404, 'Could not find category with ID = '.$this->getParams['parentid']);
-        }
-        $this->getParams['filter'] = intval($this->request->requestVar('showvaluefilter'));
-        if($this->getParams['filter'] && ! in_array($this->getParams['filter'], $this->getListProductsOnTradeMeOptions(), true)) {
-            return $this->httpError(404, 'Could not find a filter: '.$this->getParams['filter']);
         }
     }
 
@@ -120,7 +121,6 @@ class TradeMeAssignProductController extends TradeMeAssignGroupController
 
     public function save($data, $form)
     {
-        $data = array_merge($this->potentiallyUnsetDefaulData, $data);
         $updateCount = 0;
         foreach($data as $key => $value) {
             $array = explode('___', $key);
