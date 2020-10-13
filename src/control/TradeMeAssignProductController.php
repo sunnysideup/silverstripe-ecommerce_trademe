@@ -25,21 +25,23 @@ class TradeMeAssignProductController extends TradeMeAssignGroupController
         foreach ($list as $product) {
             $name = '___PRODUCT___'.$product->ID;
             $fields->push(
+                OptionSetField::create(
+                    'ShowOnTradeMe'.$name,
+                    '',
+                    $this->getListProductsOnTradeMeOptions()
+                )
+                ->setValue($product->ShowOnTradeMe)
+                ->addExtraClass('float-left')
+            );
+            $fields->push(
                 ReadonlyField::create(
                     'HEADER'.$name,
-                    '<a href="'.$product->Link().'">✎</a>',
-                    DBField::create_field('HTMLText', '<a href="'.$product->CMSEditLink().'">'.$product->Title.'</a>')
+                    '<a href="'.$product->CMSEditLink().'">✎</a>',
+                    DBField::create_field('HTMLText', '<a href="'.$product->Link().'">'.$product->InternalItemID . ' - ' . $product->Title.'</a>')
                 )->setRightTitle(
                     '» ' . TradeMeCategories::get_title_from_id($product->getCalculatedTradeMeCategory()).
                     ''
                 )
-            );
-            $fields->push(
-                OptionSetField::create(
-                    'ShowOnTradeMe'.$name,
-                    'Include on TradeMe?',
-                    $this->getListProductsOnTradeMeOptions()
-                )->setValue($product->ShowOnTradeMe)
             );
             $fields->push(
                 LiteralField::create(
@@ -78,13 +80,6 @@ class TradeMeAssignProductController extends TradeMeAssignGroupController
                 ]
             );
         }
-        if(! ($this->getParams['parentid'] || $this->getParams['filter'])) {
-            $list = $list->filter(
-                [
-                    'ShowOnTradeMe' => 'always'
-                ]
-            );
-        }
 
         return $list;
     }
@@ -116,38 +111,34 @@ class TradeMeAssignProductController extends TradeMeAssignGroupController
 
     public function Title()
     {
-        return 'TradeMe Settings for "'.$this->productGroup->Title.'"';
+        if($this->productGroup) {
+            return 'TradeMe Settings for "'.$this->productGroup->Title.'"';
+        } else {
+            return 'TradeMe Settings for Products';
+        }
     }
 
-    public function save($data, $form)
+    public function saveInner($data, $form)
     {
         $updateCount = 0;
         foreach($data as $key => $value) {
             $array = explode('___', $key);
-            $type = $array[0];
-            if(isset($array[1]) && $array[1] === 'PRODUCT') {
-                $productID = $array[2];
-                $product = Product::get()->byID($productID);
-                if($product) {
-                    if(isset($array[0]) && $array[0] === 'IncludeOnTradeMe') {
-                        $value = intval($value);
-                        if( (bool)$product->IncludeOnTradeMe !== (bool) $value) {
-                            $product->IncludeOnTradeMe = $value;
-                            $product->writeToStage('Stage');
-                            $product->publish('Stage', 'Live');
-                            $updateCount++;
-                        }
-                    }
-                    if(isset($array[0]) && $array[0] === 'ShowOnTradeMe') {
+            if(count($array) === 3) {
+                $field = $array[0];
+                $type = $array[1];
+                $productID = intval($array[2]);
+                if($type === 'PRODUCT' && $field === 'ShowOnTradeMe') {
+                    $product = Product::get()->byID($productID);
+                    if($product) {
                         if($product->ShowOnTradeMe !== $value) {
                             $product->ShowOnTradeMe = $value;
                             $product->writeToStage('Stage');
                             $product->publish('Stage', 'Live');
                             $updateCount++;
                         }
+                    } else {
+                        user_error('Could not find Product based on '.$key);
                     }
-                } else {
-                    user_error('Could not find Category based on '.$key);
                 }
             }
         }

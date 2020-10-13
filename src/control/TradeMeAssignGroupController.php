@@ -134,21 +134,23 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
                 $breadcrumbClean = strip_tags($breadcrumbRaw);
                 $fieldListSortable[$breadcrumbClean] = new CompositeField();
                 $fieldListSortable[$breadcrumbClean]->push(
+                    DropdownField::create(
+                        'ListProductsOnTradeMe'.$name,
+                        '',
+                        $options
+                    )
+                        ->setValue($group->ListProductsOnTradeMe)
+                        ->addExtraClass('float-left')
+                );
+                $fieldListSortable[$breadcrumbClean]->push(
                     ReadonlyField::create(
                         'HEADER'.$name,
                         '<a href="'.$group->CMSEditLink().'">✎</a>',
                         DBField::create_field('HTMLText', $breadcrumbRaw . ' » <a href="'.$productLink.'">'.$productCount.' Potential Products</a>')
-                    )->setRightTitle(
-                        '» ' . TradeMeCategories::get_title_from_id($group->getCalculatedTradeMeCategory()).
-                        ''
                     )
-                );
-                $fieldListSortable[$breadcrumbClean]->push(
-                    DropdownField::create(
-                        'TYPE'.$name,
-                        '',
-                        $options
-                    )->setValue($group->ListProductsOnTradeMe)
+                        ->setRightTitle(
+                            '» ' . TradeMeCategories::get_title_from_id($group->getCalculatedTradeMeCategory())
+                        )
                 );
                 $fieldListSortable[$breadcrumbClean]->push(
                     LiteralField::create(
@@ -200,12 +202,14 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
     public function saveandexport($data, $form)
     {
         $this->saveInner($data, $form);
-        $this->redirect('dev/tasks/'. $this->Config()->get('create_trademe_csv_task_class_name'));
+        $link = '/dev/tasks/'. $this->Config()->get('create_trademe_csv_task_class_name');
+        die('<a href="'.$link.'">export now? if not, use back button to return</a>');
     }
 
     public function save($data, $form)
     {
         $this->saveInner($data, $form);
+
         return $this->redirectBack();
     }
 
@@ -214,21 +218,22 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
         $updateCount = 0;
         foreach($data as $key => $value) {
             $array = explode('___', $key);
-            $type = $array[0];
-            if(isset($array[1]) && $array[1] === 'GROUP') {
-                $groupID = $array[2];
-                $group = ProductGroup::get()->byID($groupID);
-                if($group) {
-                    if(isset($array[0]) && $array[0] === 'TYPE') {
+            if(count($array) === 3) {
+                $field = $array[0];
+                $type = $array[1];
+                $groupId = intval($array[2]);
+                if($field === 'ListProductsOnTradeMe' && $type === 'GROUP') {
+                    $group = ProductGroup::get()->byID($groupID);
+                    if($group) {
                         if($group->ListProductsOnTradeMe !== $value) {
                             $group->ListProductsOnTradeMe = $value;
                             $group->writeToStage('Stage');
                             $group->publish('Stage', 'Live');
                             $updateCount++;
                         }
+                    } else {
+                        user_error('Could not find Category based on '.$key);
                     }
-                } else {
-                    user_error('Could not find Category based on '.$key);
                 }
             }
         }

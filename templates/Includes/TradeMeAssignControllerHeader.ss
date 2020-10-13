@@ -38,7 +38,7 @@
         .form-holder-trade-me .Actions {
             text-align: center;
             position: fixed;
-            color: lightgrey;
+            color: #eee;
             right: 0;
             left: 0;
             margin: 0;
@@ -49,6 +49,7 @@
         .form-holder-trade-me h1,
         .form-holder-trade-me #Form_Form_error {
             top: 0;
+            height: calc(2vh + 2vw);
         }
         .form-holder-trade-me #Form_Form_error {
             background-color: yellow!important;
@@ -85,7 +86,6 @@
 
         .form-holder-trade-me .field {
             line-height: 1.7;
-            clear: both;
         }
 
         .form-holder-trade-me .Actions {
@@ -154,6 +154,17 @@
         }
         .form-holder-trade-me .optionset li {
             display: inline;
+        }
+        .pagination {
+            background-color: #ccc;
+            text-align: right;
+            padding: 5px;
+            margin: 10px 0;
+        }
+        .float-left {
+            float: left;
+            width: auto;
+            margin-right: calc(0.5vh + 0.5vw)!important;
         }
 
     </style>
