@@ -125,6 +125,11 @@ class CreateTradeMeCsvTask extends BuildTask
         foreach($products as $product) {
             $innerArray = [];
             $data = $product->getTradeMeData($this->fields);
+            if($this->debug) {
+                echo '<h4>'.$product->Title.'</h4>';
+                $data['Data'] = array_combine(array_keys($this->fields), $data['Data']);
+                echo '<pre>'.print_r($data, 1).'</pre>';
+            }
             foreach($data['Data'] as $key => $value) {
                 $innerArray[] = CsvFunctionality::removeBadCharacters($value);
             }
