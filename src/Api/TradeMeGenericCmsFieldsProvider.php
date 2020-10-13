@@ -53,7 +53,7 @@ class TradeMeGenericCmsFieldsProvider
                 'Export',
                 DBField::create_field(
                     'HTMLText',
-                    '<a href="admin/siteconfig/">Sitewide TradeMe Settings</a>'
+                    '<a href="admin/shop/">Sitewide E-commerce TradeMe Settings</a>'
                 )
             ),
         ];

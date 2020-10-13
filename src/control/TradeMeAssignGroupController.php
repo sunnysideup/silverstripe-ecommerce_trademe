@@ -242,6 +242,25 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
         }
     }
 
+    public function getMainLinks()
+    {
+        $al =  ArrayList::create();
+
+
+        // no filter
+        $al->push(ArrayData::create([
+            'Link' => TradeMeAssignGroupController::my_link(),
+            'Title' => 'Categories',
+        ]));
+        $al->push(ArrayData::create([
+            'Link' => TradeMeAssignProductController::my_link(),
+            'Title' => 'Products',
+        ]));
+
+        $this->extend('getMainLinksAdditional', $al);
+        return $al;
+    }
+
     public function getFilterLinks() :ArrayList
     {
         $al =  ArrayList::create();

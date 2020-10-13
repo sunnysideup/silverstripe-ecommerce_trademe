@@ -123,6 +123,7 @@ class CreateTradeMeCsvTask extends BuildTask
             ->sort('InternalItemID');
         $this->output('There are ' . $products->count() . ' potential products to be listed on TradeMe.', 'good');
         foreach($products as $product) {
+            $innerArray = [];
             $data = $product->getTradeMeData($this->fields);
             foreach($data['Data'] as $key => $value) {
                 $innerArray[] = CsvFunctionality::removeBadCharacters($value);
