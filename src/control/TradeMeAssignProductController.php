@@ -144,7 +144,7 @@ class TradeMeAssignProductController extends TradeMeAssignGroupController
         }
 
         if ($updateCount) {
-            $form->sessionMessage('Updated '.$updateCount . ' fields.', 'good');
+            $form->sessionMessage('Updated '.$updateCount . ' records.', 'good');
         }
 
         return $this->redirectBack();

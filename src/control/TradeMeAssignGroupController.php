@@ -223,7 +223,7 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
                 $type = $array[1];
                 $groupId = intval($array[2]);
                 if($field === 'ListProductsOnTradeMe' && $type === 'GROUP') {
-                    $group = ProductGroup::get()->byID($groupID);
+                    $group = ProductGroup::get()->byID($groupId);
                     if($group) {
                         if($group->ListProductsOnTradeMe !== $value) {
                             $group->ListProductsOnTradeMe = $value;
@@ -238,7 +238,7 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
             }
         }
         if ($updateCount) {
-            $form->sessionMessage('Updated '.$updateCount . ' fields.', 'good');
+            $form->sessionMessage('Updated '.$updateCount . ' records.', 'good');
         }
     }
 
