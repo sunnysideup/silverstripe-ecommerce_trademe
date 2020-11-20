@@ -67,6 +67,16 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
         }
     }
 
+    public function getFilter()
+    {
+        return $this->getParams['filter'];
+    }
+
+    public function getFilterCount()
+    {
+        return $this->getListForForm()->count();
+    }
+
     public function Link($action = null) {
         return Director::absoluteURL($this->RelativeLink($action), $this->getParams);
     }
@@ -134,7 +144,7 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
                 $breadcrumbClean = strip_tags($breadcrumbRaw);
                 $fieldListSortable[$breadcrumbClean] = new CompositeField();
                 $fieldListSortable[$breadcrumbClean]->push(
-                    DropdownField::create(
+                    OptionsetField::create(
                         'ListProductsOnTradeMe'.$name,
                         '',
                         $options
@@ -146,7 +156,7 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
                     ReadonlyField::create(
                         'HEADER'.$name,
                         '<a href="'.$group->CMSEditLink().'">✎</a>',
-                        DBField::create_field('HTMLText', $breadcrumbRaw . ' » <a href="'.$productLink.'">'.$productCount.' Potential Products</a>')
+                        DBField::create_field('HTMLText', $breadcrumbRaw . ' » <a href="'.$productLink.'">Edit Individual Products ('.$productCount.')</a>')
                     )
                         ->setRightTitle(
                             '» ' . TradeMeCategories::get_title_from_id($group->getCalculatedTradeMeCategory())
@@ -238,7 +248,7 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
             }
         }
         if ($updateCount) {
-            $form->sessionMessage('Updated '.$updateCount . ' records.', 'good');
+            $form->sessionMessage('Updated '.$updateCount . ' fields.', 'good');
         }
     }
 
@@ -251,10 +261,12 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
         $al->push(ArrayData::create([
             'Link' => TradeMeAssignGroupController::my_link(),
             'Title' => 'Categories',
+            'IsCurrent' => static::class === TradeMeAssignGroupController::class,
         ]));
         $al->push(ArrayData::create([
             'Link' => TradeMeAssignProductController::my_link(),
             'Title' => 'Products',
+            'IsCurrent' => static::class === TradeMeAssignProductController::class,
         ]));
 
         $this->extend('getMainLinksAdditional', $al);

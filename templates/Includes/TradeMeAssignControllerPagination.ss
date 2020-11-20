@@ -18,8 +18,5 @@
         <a class="next" href="$ListForForm.NextLink">→</a>
     <% end_if %>
 <% end_if %>
-    | Main Links:
-    <% loop $MainLinks %>
-    <a href="$Link">$Title</a><% if $Last %><% else %>,<% end_if %>
-    <% end_loop %>
+
 </div>
