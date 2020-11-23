@@ -9,7 +9,7 @@ class ProductGroupTradeMeExtension extends DataExtension
 {
     private static $db = [
         'TradeMeCategoryID' => 'Int',
-        'ListProductsOnTradeMe' => 'Enum("none, some, all", "some")',
+        'ListProductsOnTradeMe' => 'Enum("some, none, all", "some")',
     ];
 
     public function updateCMSFields(FieldList $fields)

@@ -1,7 +1,7 @@
 <div class="pagination">
 <% if $ListForForm.MoreThanOnePage %>
     <% if $ListForForm.NotFirstPage %>
-        <a class="prev" href="$PaginatedPages.PrevLink">Prev</a>
+    <a class="prev" href="$ListForForm.PrevLink">←</a>
     <% end_if %>
     <% loop $ListForForm.PaginationSummary %>
         <% if $CurrentBool %>
@@ -15,7 +15,8 @@
         <% end_if %>
     <% end_loop %>
     <% if $ListForForm.NotLastPage %>
-        <a class="next" href="$ListForForm.NextLink">Next</a>
+        <a class="next" href="$ListForForm.NextLink">→</a>
     <% end_if %>
 <% end_if %>
+
 </div>
