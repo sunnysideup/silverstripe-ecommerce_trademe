@@ -35,15 +35,34 @@ class ExportToTradeMeTask extends BuildTask
      */
     public function run($request)
     {
-        $ftp = new \FtpClient\FtpClient();
-        $ftp->connect($this->Config()->get('ftp_location'));
-        $ftp->login(
-            $this->Config()->get('username'),
-            $this->Config()->get('password')
-        );
-        $ftp->chdir($this->Config()->get('folder_to_upload_to'));
-        $ftp->putFromPath(self::file_location());
+        $connection = ftp_connect($this->Config()->get('ftp_location'));
+        if($connection) {
+            $login = ftp_login(
+                $connection,
+                $this->Config()->get('username'),
+                $this->Config()->get('password')
+            );
+            ftp_pasv ( $connection, true );
+            if ($login) {
+
+                $upload = ftp_put($connection, 'In/products.csv', self::file_location(), FTP_BINARY);
+
+                if (! $upload) {
+                    user_error('FTP upload failed!');
+                } else {
+                    echo 'OK!';
+                }
+            } else {
+                user_error('Login attempt failed!');
+            }
+
+            ftp_close($connection);
+        } else {
+            user_error('We could not connect to FTP');
+        }
+
     }
+
 
     public static function file_location() : string
     {
