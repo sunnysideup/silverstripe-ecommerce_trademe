@@ -7,6 +7,8 @@
 class CreateTradeMeCsvTask extends BuildTask
 {
 
+    public const MAX_IMAGES = 7;
+
     //private const SUBTITLE = 'NZ Based Company – Full manufactures Warranty – 30+ years in business';
 
     /**
@@ -32,6 +34,12 @@ class CreateTradeMeCsvTask extends BuildTask
         'shippingPrice1' => null,
         'shippingDescription1' => null,
         'imageFileName1' => null,
+        'imageFileName2' => null,
+        'imageFileName3' => null,
+        'imageFileName4' => null,
+        'imageFileName5' => null,
+        'imageFileName6' => null,
+        'imageFileName7' => null,
         'brandTitle' => null,
         'attributeName1' => null,
         'attributeName2' => null,
@@ -86,6 +94,7 @@ class CreateTradeMeCsvTask extends BuildTask
     {
         return $this->html;
     }
+
 
     /**
      * Run
@@ -205,33 +214,23 @@ class CreateTradeMeCsvTask extends BuildTask
 
     public function getBestImage($product) : string
     {
-        $tradeMeImage = $product->TradeMeImage();
-        if($tradeMeImage && $tradeMeImage->exists()) {
-            $link = $tradeMeImage->Link();
-        } else {
-            $list = $this->getBestImages($product);
+        $list = $this->getBestImages($product);
 
-            $link = !empty($list) ? array_shift($list) : '';
-            if($link) {
-                $link = Director::absoluteUrl($link);
-            }
-        }
-
-        return $link;
+        return empty($list) ? '' :  array_shift($list);
     }
 
-    protected function getBestImages($product) : array
+    public function getBestImages($product) : array
     {
         $imageCollection = [
-            $product->Image()
+            $product->TradeMeImage(),
+            $product->Image(),
         ];
         foreach($product->AdditionalImages() as $image) {
             $imageCollection[] = $image;
         }
         $fileNames = [];
-        $bestOptionArray = [];
         foreach($imageCollection as $key => $image) {
-            if($image) {
+            if($image && $image->exists()) {
                 $size = (int) $image->getWidth() * (int) $image->getHeight();
                 $link = '';
                 if($image->getWidth() >= $this->minImageWidth && $image->getHeight() >= $this->minImageHeight) {
@@ -240,11 +239,12 @@ class CreateTradeMeCsvTask extends BuildTask
                     $link = $image->Pad($this->minImageWidth, $this->minImageHeight)->Link();
                 }
                 if($link) {
-                    $fileNames[$size] = $link;
+                    $link = Director::absoluteUrl($link);
+                    $fileNames[] = $link;
                 }
             }
         }
-        krsort($fileNames, SORT_NUMERIC);
+
         return $fileNames;
     }
 
