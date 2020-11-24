@@ -28,7 +28,7 @@ class ProductGroupTradeMeExtension extends DataExtension
                     TradeMeCategories::categories_field(),
                     TradeMeCategories::calculated_categories_field($this->owner),
                 ],
-                TradeMeGenericCmsFieldsProvider::get_fields($this->owner)
+                TradeMeGenericCmsFieldsProvider::get_fields($this->owner, true)
             )
         );
 

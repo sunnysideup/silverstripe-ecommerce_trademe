@@ -8,8 +8,9 @@ class TradeMeGenericCmsFieldsProvider
      * @param  ProductGroup|null
      * @return array[FormField]
      */
-    public static function get_fields($group = null) : array
+    public static function get_fields($group = null, $showConfigLink = false) : array
     {
+
         if($group && $group->exists()) {
             $productField = ReadonlyField::create(
                 'TradeMeLink2',
@@ -30,7 +31,10 @@ class TradeMeGenericCmsFieldsProvider
             );
 
         }
-        return [
+
+        $link = '/dev/tasks/'. Config::inst()->get('TradeMeAssignGroupController', 'create_trademe_csv_task_class_name');
+
+        $ar = [
             ReadonlyField::create(
                 'TradeMeLink1',
                 'Categories',
@@ -48,15 +52,26 @@ class TradeMeGenericCmsFieldsProvider
                     '<a href="dev/tasks/'.Config::inst()->get('TradeMeAssignGroupController', 'create_trademe_csv_task_class_name').'">Export to TradeMe</a>'
                 )
             ),
-            ReadonlyField::create(
+        ];
+        if($showConfigLink) {
+            $ar[] =  ReadonlyField::create(
                 'TradeMeLink3',
                 'Export',
                 DBField::create_field(
                     'HTMLText',
                     '<a href="admin/shop/">Sitewide E-commerce TradeMe Settings</a>'
                 )
-            ),
-        ];
+            );
+        }
+        $ar [] = ReadonlyField::create(
+            'ExportToTradeMeNow',
+            'Export To TradeMe',
+            DBField::create_field(
+                'HTMLText',
+                '<a href="'.$link.'">start export process now</a>'
+            )
+        );
+        return $ar;
 
     }
 

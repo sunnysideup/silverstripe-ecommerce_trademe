@@ -212,8 +212,10 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
     public function saveandexport($data, $form)
     {
         $this->saveInner($data, $form);
+
         $link = '/dev/tasks/'. $this->Config()->get('create_trademe_csv_task_class_name');
-        die('<a href="'.$link.'">export now? if not, use back button to return</a>');
+
+        return $this->redirect($link);
     }
 
     public function save($data, $form)
