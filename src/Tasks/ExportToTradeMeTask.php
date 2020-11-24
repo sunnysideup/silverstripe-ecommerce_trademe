@@ -26,6 +26,11 @@ class ExportToTradeMeTask extends BuildTask
     private static $password = '';
 
     /**
+     * @var string
+     */
+    private static $folder_to_upload_to = 'In';
+
+    /**
      * Run
      */
     public function run($request)
@@ -36,17 +41,18 @@ class ExportToTradeMeTask extends BuildTask
             $this->Config('username'),
             $this->Config('password')
         );
-
+        $ftp->chdir($this->Config('folder_to_upload_to'));
         $ftp->putFromPath(self::file_location());
     }
 
-    public static function file_location()
+    public static function file_location() : string
     {
         $path = Director::baseFolder() . '/trademe_data/';
         Filesystem::makeFolder($path);
 
         return $path . 'products.csv';
     }
+
     public static function  url_location()
     {
         return str_replace(Director::baseFolder() .'/', Director::absoluteURL('/'), self::file_location());
