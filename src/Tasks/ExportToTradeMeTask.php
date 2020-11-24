@@ -36,12 +36,12 @@ class ExportToTradeMeTask extends BuildTask
     public function run($request)
     {
         $ftp = new \FtpClient\FtpClient();
-        $ftp->connect($this->Config('ftp_location'));
+        $ftp->connect($this->Config()->get('ftp_location'));
         $ftp->login(
-            $this->Config('username'),
-            $this->Config('password')
+            $this->Config()->get('username'),
+            $this->Config()->get('password')
         );
-        $ftp->chdir($this->Config('folder_to_upload_to'));
+        $ftp->chdir($this->Config()->get('folder_to_upload_to'));
         $ftp->putFromPath(self::file_location());
     }
 
