@@ -231,7 +231,6 @@ class CreateTradeMeCsvTask extends BuildTask
         $fileNames = [];
         foreach($imageCollection as $key => $image) {
             if($image && $image->exists()) {
-                $size = (int) $image->getWidth() * (int) $image->getHeight();
                 $link = '';
                 if($image->getWidth() >= $this->minImageWidth && $image->getHeight() >= $this->minImageHeight) {
                     $link = $image->AbsoluteLink();
