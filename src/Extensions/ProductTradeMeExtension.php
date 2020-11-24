@@ -140,7 +140,7 @@ class ProductTradeMeExtension extends Extension
         $result = str_replace('&', ' and ', $result);
         if ($checkLimit) {
             $limit = Config::inst()->get('ProductTradeMeExtension', 'trade_me_title_char_limit');
-            $result = substr($result, 0, $limit);
+            $result = substr($result, 0, $limit - 1);
         }
         return (string) $result;
     }
@@ -167,16 +167,17 @@ class ProductTradeMeExtension extends Extension
         //strip tags
         $content = strip_tags($content, '<br><br />') ?: '';
 
-        //limit
-        if ($checkLimit) {
-            $limit = $limit = Config::inst()->get('ProductTradeMeExtension', 'trade_me_title_description_limit');
-            $result = substr($content, 0, $limit);
-        }
 
         //trim
         $result = trim($result);
         $result = trim($result, '<br />');
         $result = trim($result, '<br />');
+
+        //limit
+        if ($checkLimit) {
+            $limit = $limit = Config::inst()->get('ProductTradeMeExtension', 'trade_me_title_description_limit');
+            $result = substr($content, 0, $limit - 1);
+        }
 
         return (string) $result;
     }
