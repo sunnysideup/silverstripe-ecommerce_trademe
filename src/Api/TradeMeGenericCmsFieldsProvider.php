@@ -68,7 +68,7 @@ class TradeMeGenericCmsFieldsProvider
             'Export To TradeMe',
             DBField::create_field(
                 'HTMLText',
-                '<a href="'.$link.'">start export process now</a>'
+                '<a href="'.$link.'">Start export process now</a>'
             )
         );
         return $ar;

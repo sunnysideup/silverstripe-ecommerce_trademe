@@ -169,14 +169,15 @@ class ProductTradeMeExtension extends Extension
 
 
         //trim
-        $result = trim($result);
-        $result = trim($result, '<br />');
-        $result = trim($result, '<br />');
+        $result = trim($content);
+        $result = trim($result, '<br><br />');
+        $result = trim($result, '<br><br />');
+        $result = str_replace('<br />', '<br>', $result);
 
         //limit
         if ($checkLimit) {
             $limit = $limit = Config::inst()->get('ProductTradeMeExtension', 'trade_me_title_description_limit');
-            $result = substr($content, 0, $limit - 1);
+            $result = substr($result, 0, $limit - 1);
         }
 
         return (string) $result;
