@@ -1,5 +1,18 @@
 <?php
 
+namespace Sunnysideup\EcommerceTrademe\Extensions;
+
+use Extension;
+use FieldList;
+use OptionsetField;
+use TradeMeCategories;
+use UploadField;
+use TradeMeGenericCmsFieldsProvider;
+use ProductGroup;
+use Config;
+use EcommerceDBConfig;
+
+
 
 
 /**

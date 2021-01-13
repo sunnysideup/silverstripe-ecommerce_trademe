@@ -1,5 +1,11 @@
 <?php
 
+namespace Sunnysideup\EcommerceTrademe\Tasks;
+
+use BuildTask;
+use DB;
+
+
 
 /**
  * create CSV for TradeMe

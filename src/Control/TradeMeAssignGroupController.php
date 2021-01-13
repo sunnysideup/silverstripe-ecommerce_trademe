@@ -1,5 +1,32 @@
 <?php
 
+namespace Sunnysideup\EcommerceTrademe\Control;
+
+use Controller;
+use PermissionProvider;
+use CreateTradeMeCsvTask;
+use Permission;
+use Security;
+use DataObject;
+use ProductGroup;
+use Director;
+use Config;
+use PaginatedList;
+use DataList;
+use FieldList;
+use CompositeField;
+use OptionsetField;
+use ReadonlyField;
+use DBField;
+use TradeMeCategories;
+use LiteralField;
+use Form;
+use FormAction;
+use HiddenField;
+use ArrayList;
+use ArrayData;
+
+
 class TradeMeAssignGroupController extends Controller implements PermissionProvider
 {
 

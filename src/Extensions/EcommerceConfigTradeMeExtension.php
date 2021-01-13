@@ -1,4 +1,12 @@
 <?php
+
+namespace Sunnysideup\EcommerceTrademe\Extensions;
+
+use DataExtension;
+use FieldList;
+use TextareaField;
+use TradeMeGenericCmsFieldsProvider;
+
 /**
  * EcommerceRole provides customisations to the {@link Member}
  * class specifically for this ecommerce module.

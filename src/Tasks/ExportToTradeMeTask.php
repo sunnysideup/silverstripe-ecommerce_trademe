@@ -1,5 +1,12 @@
 <?php
 
+namespace Sunnysideup\EcommerceTrademe\Tasks;
+
+use BuildTask;
+use Director;
+use Filesystem;
+
+
 
 /**
  * Sends listings to trademe

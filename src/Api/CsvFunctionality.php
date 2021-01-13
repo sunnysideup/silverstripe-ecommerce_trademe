@@ -1,5 +1,10 @@
 <?php
 
+namespace Sunnysideup\EcommerceTrademe\Api;
+
+
+
+
 
 class CsvFunctionality
 {

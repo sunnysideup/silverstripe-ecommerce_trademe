@@ -1,4 +1,15 @@
 <?php
+
+namespace Sunnysideup\EcommerceTrademe\Extensions;
+
+use DataExtension;
+use FieldList;
+use OptionsetField;
+use TradeMeCategories;
+use TradeMeGenericCmsFieldsProvider;
+use int;
+use ProductGroup;
+
 /**
  * Product Group is a 'holder' for Products within the CMS
  * It contains functions for versioning child products

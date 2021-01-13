@@ -1,5 +1,21 @@
 <?php
 
+namespace Sunnysideup\EcommerceTrademe\Control;
+
+use FieldList;
+use OptionsetField;
+use ReadonlyField;
+use DBField;
+use TradeMeCategories;
+use LiteralField;
+use Form;
+use DataObject;
+use Product;
+use DataList;
+use Config;
+use ProductGroup;
+
+
 class TradeMeAssignProductController extends TradeMeAssignGroupController
 {
     /**

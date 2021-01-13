@@ -1,5 +1,14 @@
 <?php
 
+namespace Sunnysideup\EcommerceTrademe\Tasks;
+
+use BuildTask;
+use CsvFunctionality;
+use Director;
+use TradeMeAssignProductController;
+use DB;
+
+
 
 /**
  * create CSV for TradeMe

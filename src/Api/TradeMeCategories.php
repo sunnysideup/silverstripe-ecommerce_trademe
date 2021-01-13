@@ -1,5 +1,14 @@
 <?php
 
+namespace Sunnysideup\EcommerceTrademe\Api;
+
+use ViewableData;
+use Config;
+use DropdownField;
+use ReadonlyField;
+use HiddenField;
+
+
 
 
 /**

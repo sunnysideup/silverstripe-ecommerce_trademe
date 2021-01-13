@@ -1,5 +1,14 @@
 <?php
 
+namespace Sunnysideup\EcommerceTrademe\Api;
+
+use ReadonlyField;
+use DBField;
+use TradeMeAssignProductController;
+use Config;
+use TradeMeAssignGroupController;
+
+
 class TradeMeGenericCmsFieldsProvider
 {
 
