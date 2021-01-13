@@ -21,8 +21,7 @@
         }
     ],
     "require": {
-        "sunnysideup/ecommerce": "*",
-        "silverstripe/framework": "~3.6"
+        "sunnysideup/ecommerce": "*"
     },
     "extra": {
         "installer-name": "ecommerce_trademe"
