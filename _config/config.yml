@@ -1,7 +1,11 @@
 ---
 Name: ecommerce_trade_me
-Before: 'app/*'
-After: 'framework/*','cms/*','ecommerce/*'
+Before:
+  - '#app/'
+After:
+  - '#coreconfig'
+  - '#cmsextensions'
+  - '#ecommerce'
 ---
 Sunnysideup\Ecommerce\Pages\ProductGroup:
   extensions:
