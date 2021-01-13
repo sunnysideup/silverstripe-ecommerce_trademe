@@ -7,7 +7,7 @@ namespace Sunnysideup\EcommerceTrademe\Extensions;
 
 
 
-use int;
+
 
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\OptionsetField;
