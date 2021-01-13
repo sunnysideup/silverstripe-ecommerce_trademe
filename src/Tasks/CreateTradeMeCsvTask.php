@@ -101,7 +101,7 @@ class CreateTradeMeCsvTask extends BuildTask
      */
     public function run($request)
     {
-        increase_time_limit_to(600);
+        Silverstripe\Core\Environment::increaseTimeLimitTo(600);
         $this->debug = empty($_GET['details']) ? false : true;
         if(! $this->debug) {
             $this->output('<h4>Add ?details=1 to your URL to see all the details on screen...</h4>');

@@ -42,7 +42,16 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
 
     public function index($request)
     {
-        return $this->renderWith($this->Config()->get('template'));
+
+/**
+  * ### @@@@ START REPLACEMENT @@@@ ###
+  * WHY: automated upgrade
+  * OLD: ->RenderWith( (ignore case)
+  * NEW: ->RenderWith( (COMPLEX)
+  * EXP: Check that the template location is still valid!
+  * ### @@@@ STOP REPLACEMENT @@@@ ###
+  */
+        return $this->RenderWith($this->Config()->get('template'));
     }
 
     protected $getParams = [];

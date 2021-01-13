@@ -25,7 +25,7 @@ class TradeMeAssignProductController extends TradeMeAssignGroupController
         foreach ($list as $product) {
             $name = '___PRODUCT___'.$product->ID;
             $fields->push(
-                OptionSetField::create(
+                OptionsetField::create(
                     'ShowOnTradeMe'.$name,
                     '',
                     $this->getListProductsOnTradeMeOptions()

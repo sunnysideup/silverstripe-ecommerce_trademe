@@ -1,6 +1,15 @@
 <?php
 
 
+
+/**
+  * ### @@@@ START REPLACEMENT @@@@ ###
+  * WHY: automated upgrade
+  * OLD:  extends Extension (ignore case)
+  * NEW:  extends Extension (COMPLEX)
+  * EXP: Check for use of $this->anyVar and replace with $this->anyVar[$this->owner->ID] or consider turning the class into a trait
+  * ### @@@@ STOP REPLACEMENT @@@@ ###
+  */
 class ProductTradeMeExtension extends Extension
 {
     /**
@@ -17,6 +26,15 @@ class ProductTradeMeExtension extends Extension
      * @var array
      */
     private static $has_one = [
+
+/**
+  * ### @@@@ START REPLACEMENT @@@@ ###
+  * WHY: automated upgrade
+  * OLD:  => 'Image' (case sensitive)
+  * NEW:  => 'Image' (COMPLEX)
+  * EXP: you may want to add ownership (owns)
+  * ### @@@@ STOP REPLACEMENT @@@@ ###
+  */
         'TradeMeImage' => 'Image',
     ];
 
@@ -62,7 +80,7 @@ class ProductTradeMeExtension extends Extension
             'Root.TradeMe',
             array_merge(
                 [
-                    $listOptions = OptionSetField::create(
+                    $listOptions = OptionsetField::create(
                         'ShowOnTradeMe',
                         'Show on TradeMe?',
                         $this->owner->dbObject('ShowOnTradeMe')->enumValues()

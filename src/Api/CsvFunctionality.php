@@ -20,7 +20,7 @@ class CsvFunctionality
         $enclosure_esc = preg_quote($enclosure, '/');
         $string = '';
         foreach ($rows as $row) {
-            $output = array();
+            $output = [];
             foreach ($row as $field) {
                 if (!$field) {
                     $output[] = $enclosure.$field.$enclosure;

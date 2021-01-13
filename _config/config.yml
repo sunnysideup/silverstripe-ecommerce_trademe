@@ -1,6 +1,6 @@
 ---
 Name: ecommerce_trade_me
-Before: 'mysite/*'
+Before: 'app/*'
 After: 'framework/*','cms/*','ecommerce/*'
 ---
 
