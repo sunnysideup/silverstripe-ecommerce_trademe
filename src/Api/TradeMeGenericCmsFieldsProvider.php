@@ -76,3 +76,11 @@ class TradeMeGenericCmsFieldsProvider
     }
 
 }
+
+
+
+
+
+
+
+
