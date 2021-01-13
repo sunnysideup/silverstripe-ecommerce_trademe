@@ -2,30 +2,20 @@
 
 namespace Sunnysideup\EcommerceTrademe\Api;
 
-
-
-
-
-
 use SilverStripe\Core\Config\Config;
-use Sunnysideup\EcommerceTrademe\Api\TradeMeCategories;
 use SilverStripe\Forms\DropdownField;
-use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\Forms\HiddenField;
+use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\View\ViewableData;
 
-
-
-
-
 /**
-  * ### @@@@ START REPLACEMENT @@@@ ###
-  * WHY: automated upgrade
-  * OLD:  extends Object (ignore case)
-  * NEW:  extends ViewableData (COMPLEX)
-  * EXP: This used to extend Object, but object does not exist anymore. You can also manually add use Extensible, use Injectable, and use Configurable
-  * ### @@@@ STOP REPLACEMENT @@@@ ###
-  */
+ * ### @@@@ START REPLACEMENT @@@@ ###
+ * WHY: automated upgrade
+ * OLD:  extends Object (ignore case)
+ * NEW:  extends ViewableData (COMPLEX)
+ * EXP: This used to extend Object, but object does not exist anymore. You can also manually add use Extensible, use Injectable, and use Configurable
+ * ### @@@@ STOP REPLACEMENT @@@@ ###
+ */
 class TradeMeCategories extends ViewableData
 {
     /**
@@ -49,7 +39,7 @@ class TradeMeCategories extends ViewableData
     public static function get_title_from_id($categoryID): string
     {
         $array = self::get_categories();
-        if(! $categoryID) {
+        if (! $categoryID) {
             $categoryID = Config::inst()->get(TradeMeCategories::class, 'trade_me_default');
         }
         return $array[$categoryID] ?? 'unknown category';
@@ -63,6 +53,7 @@ class TradeMeCategories extends ViewableData
             TradeMeCategories::get_categories()
         );
     }
+
     public static function calculated_categories_field($object)
     {
         $calculatedCategory = $object->getCalculatedTradeMeCategory();
@@ -74,9 +65,8 @@ class TradeMeCategories extends ViewableData
             )->setDescription('
                     The TradeMe Category for this Category/Product is set by one of the parent Product Categories.
                 ');
-        } else {
-            return HiddenField::create('CalculatedCategory');
         }
+        return HiddenField::create('CalculatedCategory');
     }
 
     public static function get_trade_me_categories()
@@ -87,11 +77,3 @@ class TradeMeCategories extends ViewableData
         return $categories;
     }
 }
-
-
-
-
-
-
-
-

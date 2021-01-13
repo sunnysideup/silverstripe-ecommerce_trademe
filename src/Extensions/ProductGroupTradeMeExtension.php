@@ -2,20 +2,12 @@
 
 namespace Sunnysideup\EcommerceTrademe\Extensions;
 
-
-
-
-
-
-
-
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\OptionsetField;
+use SilverStripe\ORM\DataExtension;
+use Sunnysideup\Ecommerce\Pages\ProductGroup;
 use Sunnysideup\EcommerceTrademe\Api\TradeMeCategories;
 use Sunnysideup\EcommerceTrademe\Api\TradeMeGenericCmsFieldsProvider;
-use Sunnysideup\Ecommerce\Pages\ProductGroup;
-use SilverStripe\ORM\DataExtension;
-
 
 /**
  * Product Group is a 'holder' for Products within the CMS
@@ -25,13 +17,13 @@ use SilverStripe\ORM\DataExtension;
  */
 
 /**
-  * ### @@@@ START REPLACEMENT @@@@ ###
-  * WHY: automated upgrade
-  * OLD:  extends DataExtension (ignore case)
-  * NEW:  extends DataExtension (COMPLEX)
-  * EXP: Check for use of $this->anyVar and replace with $this->anyVar[$this->owner->ID] or consider turning the class into a trait
-  * ### @@@@ STOP REPLACEMENT @@@@ ###
-  */
+ * ### @@@@ START REPLACEMENT @@@@ ###
+ * WHY: automated upgrade
+ * OLD:  extends DataExtension (ignore case)
+ * NEW:  extends DataExtension (COMPLEX)
+ * EXP: Check for use of $this->anyVar and replace with $this->anyVar[$this->owner->ID] or consider turning the class into a trait
+ * ### @@@@ STOP REPLACEMENT @@@@ ###
+ */
 class ProductGroupTradeMeExtension extends DataExtension
 {
     private static $db = [
@@ -58,8 +50,6 @@ class ProductGroupTradeMeExtension extends DataExtension
                 TradeMeGenericCmsFieldsProvider::get_fields($this->owner, true)
             )
         );
-
-
     }
 
     public function onBeforeWrite()
@@ -110,11 +100,3 @@ class ProductGroupTradeMeExtension extends DataExtension
         }
     }
 }
-
-
-
-
-
-
-
-

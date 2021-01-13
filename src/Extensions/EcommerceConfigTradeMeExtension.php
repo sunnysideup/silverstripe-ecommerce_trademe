@@ -2,15 +2,10 @@
 
 namespace Sunnysideup\EcommerceTrademe\Extensions;
 
-
-
-
-
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextareaField;
-use Sunnysideup\EcommerceTrademe\Api\TradeMeGenericCmsFieldsProvider;
 use SilverStripe\ORM\DataExtension;
-
+use Sunnysideup\EcommerceTrademe\Api\TradeMeGenericCmsFieldsProvider;
 
 /**
  * EcommerceRole provides customisations to the {@link Member}
@@ -20,13 +15,13 @@ use SilverStripe\ORM\DataExtension;
  */
 
 /**
-  * ### @@@@ START REPLACEMENT @@@@ ###
-  * WHY: automated upgrade
-  * OLD:  extends DataExtension (ignore case)
-  * NEW:  extends DataExtension (COMPLEX)
-  * EXP: Check for use of $this->anyVar and replace with $this->anyVar[$this->owner->ID] or consider turning the class into a trait
-  * ### @@@@ STOP REPLACEMENT @@@@ ###
-  */
+ * ### @@@@ START REPLACEMENT @@@@ ###
+ * WHY: automated upgrade
+ * OLD:  extends DataExtension (ignore case)
+ * NEW:  extends DataExtension (COMPLEX)
+ * EXP: Check for use of $this->anyVar and replace with $this->anyVar[$this->owner->ID] or consider turning the class into a trait
+ * ### @@@@ STOP REPLACEMENT @@@@ ###
+ */
 class EcommerceConfigTradeMeExtension extends DataExtension
 {
     private static $db = [
@@ -48,11 +43,3 @@ class EcommerceConfigTradeMeExtension extends DataExtension
         );
     }
 }
-
-
-
-
-
-
-
-
