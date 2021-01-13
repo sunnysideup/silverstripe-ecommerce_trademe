@@ -165,7 +165,7 @@ class ProductTradeMeExtension extends Extension
         $content = str_replace('</p>', '<br />', $content);
 
         //strip tags
-        $content = strip_tags($content, '<br><br />') ?: '';
+        $content = strip_tags($content, '<br>') ?: '';
 
 
         //trim
