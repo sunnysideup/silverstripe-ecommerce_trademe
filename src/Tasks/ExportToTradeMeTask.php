@@ -2,9 +2,13 @@
 
 namespace Sunnysideup\EcommerceTrademe\Tasks;
 
-use BuildTask;
-use Director;
-use Filesystem;
+
+
+
+use SilverStripe\Control\Director;
+use SilverStripe\Assets\Filesystem;
+use SilverStripe\Dev\BuildTask;
+
 
 
 

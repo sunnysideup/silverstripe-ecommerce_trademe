@@ -2,15 +2,27 @@
 
 namespace Sunnysideup\EcommerceTrademe\Extensions;
 
-use Extension;
-use FieldList;
-use OptionsetField;
-use TradeMeCategories;
-use UploadField;
-use TradeMeGenericCmsFieldsProvider;
-use ProductGroup;
-use Config;
-use EcommerceDBConfig;
+
+
+
+
+
+
+
+
+
+use SilverStripe\Assets\Image;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\OptionsetField;
+use Sunnysideup\EcommerceTrademe\Api\TradeMeCategories;
+use SilverStripe\AssetAdmin\Forms\UploadField;
+use Sunnysideup\EcommerceTrademe\Api\TradeMeGenericCmsFieldsProvider;
+use Sunnysideup\Ecommerce\Pages\ProductGroup;
+use SilverStripe\Core\Config\Config;
+use Sunnysideup\EcommerceTrademe\Extensions\ProductTradeMeExtension;
+use Sunnysideup\Ecommerce\Model\Config\EcommerceDBConfig;
+use SilverStripe\Core\Extension;
+
 
 
 
@@ -48,7 +60,7 @@ class ProductTradeMeExtension extends Extension
   * EXP: you may want to add ownership (owns)
   * ### @@@@ STOP REPLACEMENT @@@@ ###
   */
-        'TradeMeImage' => 'Image',
+        'TradeMeImage' => Image::class,
     ];
 
     /**
@@ -153,7 +165,7 @@ class ProductTradeMeExtension extends Extension
                 $categoryID = $this->owner->getTradeMeCustomCategory($categoryID);
             }
         } else {
-            $categoryID = Config::inst()->get('TradeMeCategories', 'trade_me_default');
+            $categoryID = Config::inst()->get(TradeMeCategories::class, 'trade_me_default');
         }
 
         return $categoryID;
@@ -170,7 +182,7 @@ class ProductTradeMeExtension extends Extension
         $result = $this->owner->Title;
         $result = str_replace('&', ' and ', $result);
         if ($checkLimit) {
-            $limit = Config::inst()->get('ProductTradeMeExtension', 'trade_me_title_char_limit');
+            $limit = Config::inst()->get(ProductTradeMeExtension::class, 'trade_me_title_char_limit');
             $result = substr($result, 0, $limit - 1);
         }
         return (string) $result;
@@ -207,7 +219,7 @@ class ProductTradeMeExtension extends Extension
 
         //limit
         if ($checkLimit) {
-            $limit = $limit = Config::inst()->get('ProductTradeMeExtension', 'trade_me_title_description_limit');
+            $limit = $limit = Config::inst()->get(ProductTradeMeExtension::class, 'trade_me_title_description_limit');
             $result = substr($result, 0, $limit - 1);
         }
 

@@ -2,11 +2,17 @@
 
 namespace Sunnysideup\EcommerceTrademe\Api;
 
-use ReadonlyField;
-use DBField;
-use TradeMeAssignProductController;
-use Config;
-use TradeMeAssignGroupController;
+
+
+
+
+
+use Sunnysideup\EcommerceTrademe\Control\TradeMeAssignProductController;
+use SilverStripe\ORM\FieldType\DBField;
+use SilverStripe\Forms\ReadonlyField;
+use SilverStripe\Core\Config\Config;
+use Sunnysideup\EcommerceTrademe\Control\TradeMeAssignGroupController;
+
 
 
 class TradeMeGenericCmsFieldsProvider
@@ -41,7 +47,7 @@ class TradeMeGenericCmsFieldsProvider
 
         }
 
-        $link = '/dev/tasks/'. Config::inst()->get('TradeMeAssignGroupController', 'create_trademe_csv_task_class_name');
+        $link = '/dev/tasks/'. Config::inst()->get(TradeMeAssignGroupController::class, 'create_trademe_csv_task_class_name');
 
         $ar = [
             ReadonlyField::create(
@@ -58,7 +64,7 @@ class TradeMeGenericCmsFieldsProvider
                 'Export',
                 DBField::create_field(
                     'HTMLText',
-                    '<a href="dev/tasks/'.Config::inst()->get('TradeMeAssignGroupController', 'create_trademe_csv_task_class_name').'">Export to TradeMe</a>'
+                    '<a href="dev/tasks/'.Config::inst()->get(TradeMeAssignGroupController::class, 'create_trademe_csv_task_class_name').'">Export to TradeMe</a>'
                 )
             ),
         ];

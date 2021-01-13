@@ -2,18 +2,31 @@
 
 namespace Sunnysideup\EcommerceTrademe\Control;
 
-use FieldList;
-use OptionsetField;
-use ReadonlyField;
-use DBField;
-use TradeMeCategories;
-use LiteralField;
-use Form;
-use DataObject;
-use Product;
-use DataList;
-use Config;
-use ProductGroup;
+
+
+
+
+
+
+
+
+
+
+
+
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\OptionsetField;
+use SilverStripe\ORM\FieldType\DBField;
+use SilverStripe\Forms\ReadonlyField;
+use Sunnysideup\EcommerceTrademe\Api\TradeMeCategories;
+use SilverStripe\Forms\LiteralField;
+use SilverStripe\Forms\Form;
+use Sunnysideup\Ecommerce\Pages\Product;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\Core\Config\Config;
+use Sunnysideup\EcommerceTrademe\Control\TradeMeAssignProductController;
+use Sunnysideup\Ecommerce\Pages\ProductGroup;
+
 
 
 class TradeMeAssignProductController extends TradeMeAssignGroupController
@@ -73,7 +86,7 @@ class TradeMeAssignProductController extends TradeMeAssignGroupController
 
         $actions = $this->getFormActions();
 
-        $form = new Form($this, 'Form', $fields, $actions);
+        $form = new Form($this, Form::class, $fields, $actions);
 
         return $form;
     }
@@ -103,7 +116,7 @@ class TradeMeAssignProductController extends TradeMeAssignGroupController
     public static function base_list() :DataList
     {
         $list = Product::get()->filter(['AllowPurchase' => true]);
-        $filter = Config::inst()->get('TradeMeAssignProductController', 'product_filter');
+        $filter = Config::inst()->get(TradeMeAssignProductController::class, 'product_filter');
         if(! empty($filter)) {
             $list = $list->filter($filter);
         }

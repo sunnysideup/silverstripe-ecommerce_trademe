@@ -2,11 +2,18 @@
 
 namespace Sunnysideup\EcommerceTrademe\Api;
 
-use ViewableData;
-use Config;
-use DropdownField;
-use ReadonlyField;
-use HiddenField;
+
+
+
+
+
+use SilverStripe\Core\Config\Config;
+use Sunnysideup\EcommerceTrademe\Api\TradeMeCategories;
+use SilverStripe\Forms\DropdownField;
+use SilverStripe\Forms\ReadonlyField;
+use SilverStripe\Forms\HiddenField;
+use SilverStripe\View\ViewableData;
+
 
 
 
@@ -36,14 +43,14 @@ class TradeMeCategories extends ViewableData
 
     public static function get_categories(): array
     {
-        return Config::inst()->get('TradeMeCategories', 'trade_me_categories');
+        return Config::inst()->get(TradeMeCategories::class, 'trade_me_categories');
     }
 
     public static function get_title_from_id($categoryID): string
     {
         $array = self::get_categories();
         if(! $categoryID) {
-            $categoryID = Config::inst()->get('TradeMeCategories', 'trade_me_default');
+            $categoryID = Config::inst()->get(TradeMeCategories::class, 'trade_me_default');
         }
         return $array[$categoryID] ?? 'unknown category';
     }

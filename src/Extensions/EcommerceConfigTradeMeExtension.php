@@ -2,10 +2,15 @@
 
 namespace Sunnysideup\EcommerceTrademe\Extensions;
 
-use DataExtension;
-use FieldList;
-use TextareaField;
-use TradeMeGenericCmsFieldsProvider;
+
+
+
+
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\TextareaField;
+use Sunnysideup\EcommerceTrademe\Api\TradeMeGenericCmsFieldsProvider;
+use SilverStripe\ORM\DataExtension;
+
 
 /**
  * EcommerceRole provides customisations to the {@link Member}

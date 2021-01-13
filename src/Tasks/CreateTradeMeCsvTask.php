@@ -2,11 +2,17 @@
 
 namespace Sunnysideup\EcommerceTrademe\Tasks;
 
-use BuildTask;
-use CsvFunctionality;
-use Director;
-use TradeMeAssignProductController;
-use DB;
+
+
+
+
+
+use Sunnysideup\EcommerceTrademe\Api\CsvFunctionality;
+use SilverStripe\Control\Director;
+use Sunnysideup\EcommerceTrademe\Control\TradeMeAssignProductController;
+use SilverStripe\ORM\DB;
+use SilverStripe\Dev\BuildTask;
+
 
 
 

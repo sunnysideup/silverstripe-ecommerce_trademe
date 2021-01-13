@@ -2,13 +2,20 @@
 
 namespace Sunnysideup\EcommerceTrademe\Extensions;
 
-use DataExtension;
-use FieldList;
-use OptionsetField;
-use TradeMeCategories;
-use TradeMeGenericCmsFieldsProvider;
+
+
+
+
+
 use int;
-use ProductGroup;
+
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\OptionsetField;
+use Sunnysideup\EcommerceTrademe\Api\TradeMeCategories;
+use Sunnysideup\EcommerceTrademe\Api\TradeMeGenericCmsFieldsProvider;
+use Sunnysideup\Ecommerce\Pages\ProductGroup;
+use SilverStripe\ORM\DataExtension;
+
 
 /**
  * Product Group is a 'holder' for Products within the CMS

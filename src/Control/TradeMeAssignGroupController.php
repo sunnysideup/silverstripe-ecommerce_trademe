@@ -2,29 +2,53 @@
 
 namespace Sunnysideup\EcommerceTrademe\Control;
 
-use Controller;
-use PermissionProvider;
-use CreateTradeMeCsvTask;
-use Permission;
-use Security;
-use DataObject;
-use ProductGroup;
-use Director;
-use Config;
-use PaginatedList;
-use DataList;
-use FieldList;
-use CompositeField;
-use OptionsetField;
-use ReadonlyField;
-use DBField;
-use TradeMeCategories;
-use LiteralField;
-use Form;
-use FormAction;
-use HiddenField;
-use ArrayList;
-use ArrayData;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+use Sunnysideup\EcommerceTrademe\Tasks\CreateTradeMeCsvTask;
+use SilverStripe\Security\Permission;
+use SilverStripe\Security\Security;
+use Sunnysideup\Ecommerce\Pages\ProductGroup;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\Control\Director;
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Control\Controller;
+use SilverStripe\ORM\PaginatedList;
+use Sunnysideup\EcommerceTrademe\Control\TradeMeAssignGroupController;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\CompositeField;
+use SilverStripe\Forms\OptionsetField;
+use SilverStripe\ORM\FieldType\DBField;
+use SilverStripe\Forms\ReadonlyField;
+use Sunnysideup\EcommerceTrademe\Api\TradeMeCategories;
+use SilverStripe\Forms\LiteralField;
+use SilverStripe\Forms\Form;
+use SilverStripe\Forms\FormAction;
+use SilverStripe\Forms\HiddenField;
+use SilverStripe\ORM\ArrayList;
+use SilverStripe\View\ArrayData;
+use SilverStripe\Security\PermissionProvider;
+
 
 
 class TradeMeAssignGroupController extends Controller implements PermissionProvider
@@ -163,7 +187,7 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
     public static function base_list() : DataList
     {
         $list = ProductGroup::get();
-        $filter = Config::inst()->get('TradeMeAssignGroupController', 'group_filter');
+        $filter = Config::inst()->get(TradeMeAssignGroupController::class, 'group_filter');
         if(! empty($filter)) {
             $list = $list->filter($filter);
         }
@@ -225,7 +249,7 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
 
         $actions = $this->getFormActions();
 
-        $form = new Form($this, 'Form', $fields, $actions);
+        $form = new Form($this, Form::class, $fields, $actions);
 
         return $form;
     }
