@@ -1,0 +1,14 @@
+---
+Name: ecommerce_trade_me
+Before: 'app/*'
+After: 'framework/*','cms/*','ecommerce/*'
+---
+Sunnysideup\Ecommerce\Pages\ProductGroup:
+  extensions:
+    - Sunnysideup\EcommerceTrademe\Extensions\ProductGroupTradeMeExtension
+Sunnysideup\Ecommerce\Pages\Product:
+  extensions:
+    - Sunnysideup\EcommerceTrademe\Extensions\ProductTradeMeExtension
+Sunnysideup\Ecommerce\Model\Config\EcommerceDBConfig:
+  extensions:
+    - Sunnysideup\EcommerceTrademe\Extensions\EcommerceConfigTradeMeExtension
