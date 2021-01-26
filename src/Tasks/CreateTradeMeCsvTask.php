@@ -139,7 +139,7 @@ class CreateTradeMeCsvTask extends BuildTask
             $imageCollection[] = $image;
         }
         $fileNames = [];
-        foreach ($imageCollection as $key => $image) {
+        foreach ($imageCollection as $image) {
             if ($image && $image->exists()) {
                 $link = '';
                 if ($image->getWidth() >= $this->minImageWidth && $image->getHeight() >= $this->minImageHeight) {
@@ -179,7 +179,7 @@ class CreateTradeMeCsvTask extends BuildTask
                 $data['Data'] = array_combine(array_keys($this->fields), $data['Data']);
                 echo '<pre>' . print_r($data, 1) . '</pre>';
             }
-            foreach ($data['Data'] as $key => $value) {
+            foreach ($data['Data'] as $value) {
                 $innerArray[] = CsvFunctionality::removeBadCharacters($value);
             }
             if (! empty($data['Include'])) {
@@ -259,9 +259,7 @@ class CreateTradeMeCsvTask extends BuildTask
                 $html .= '<li>' . $value . '</li>';
             }
         }
-        $html .= '</ul>';
-
-        return $html;
+        return $html . '</ul>';
     }
 
     protected function output(string $msg, ?string $style = '')
