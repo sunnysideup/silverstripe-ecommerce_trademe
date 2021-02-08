@@ -10,7 +10,7 @@ class EcommerceTrademeTest extends SapphireTest
 
     public function TestDevBuild()
     {
-        $exitStatus = shell_exec('php vendor/bin/sake dev/build flush=all  > dev/null; echo $?');
+        $exitStatus = shell_exec('vendor/bin/sake dev/build flush=all  > dev/null; echo $?');
         $exitStatus = intval(trim($exitStatus));
         $this->assertSame(0, $exitStatus);
     }
