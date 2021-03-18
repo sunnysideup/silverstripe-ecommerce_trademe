@@ -1,0 +1,7 @@
+---
+Name: trademeroutes
+---
+Director:
+  rules:
+    'admin/set-trade-me-categories//$Action/$ID/$OtherID': 'TradeMeAssignGroupController'
+    'admin/set-trade-me-products//$Action/$ID/$OtherID': 'TradeMeAssignProductController'
