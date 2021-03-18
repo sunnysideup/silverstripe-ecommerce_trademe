@@ -1,0 +1,17 @@
+<ul class="inline-links">
+    <li>
+<<<<<<< HEAD
+        Filter by setting:
+    </li>
+
+    <% loop FilterLinks %>
+    <li><a href="$Link" class="$LinkingMode">$Title</a><% if $Last %>.<% else %>, <% end_if %></li>
+=======
+        Filter by value:
+    </li>
+
+    <% loop FilterLinks %>
+    <li><a href="$Link" class="$LinkingMode">$Title</a><% if $First %> // <% else %> / <% end_if %></li>
+>>>>>>> 58ebd968706a0655d7d851e2a49b961d0f548073
+    <% end_loop %>
+</ul>
