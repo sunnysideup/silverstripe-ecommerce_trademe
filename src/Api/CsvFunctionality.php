@@ -1,9 +1,9 @@
 <?php
 
+namespace Sunnysideup\EcommerceTrademe\Api;
 
 class CsvFunctionality
 {
-
     public static function removeBadCharacters($item)
     {
         $item = str_replace(';', ',', $item);
@@ -20,12 +20,11 @@ class CsvFunctionality
         $enclosure_esc = preg_quote($enclosure, '/');
         $string = '';
         foreach ($rows as $row) {
-            $output = array();
+            $output = [];
             foreach ($row as $field) {
-                if (!$field) {
-                    $output[] = $enclosure.$field.$enclosure;
+                if (! $field) {
+                    $output[] = $enclosure . $field . $enclosure;
                 } else {
-
                     // Enclose fields containing $delimiter, $enclosure or whitespace
                     if ($encloseAll || preg_match("/(?:${delimiter_esc}|${enclosure_esc}|\s)/", $field)) {
                         $output[] = $enclosure . str_replace($enclosure, $enclosure . $enclosure, $field) . $enclosure;
@@ -43,5 +42,4 @@ class CsvFunctionality
         }
         return $string;
     }
-
 }

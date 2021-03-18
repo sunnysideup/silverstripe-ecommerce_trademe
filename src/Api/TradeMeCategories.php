@@ -1,7 +1,22 @@
 <?php
 
+namespace Sunnysideup\EcommerceTrademe\Api;
 
-class TradeMeCategories extends Object
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Forms\DropdownField;
+use SilverStripe\Forms\HiddenField;
+use SilverStripe\Forms\ReadonlyField;
+use SilverStripe\View\ViewableData;
+
+/**
+ * ### @@@@ START REPLACEMENT @@@@ ###
+ * WHY: automated upgrade
+ * OLD:  extends Object (ignore case)
+ * NEW:  extends ViewableData (COMPLEX)
+ * EXP: This used to extend Object, but object does not exist anymore. You can also manually add use Extensible, use Injectable, and use Configurable
+ * ### @@@@ STOP REPLACEMENT @@@@ ###
+ */
+class TradeMeCategories extends ViewableData
 {
     /**
      * e.g.
@@ -18,14 +33,14 @@ class TradeMeCategories extends Object
 
     public static function get_categories(): array
     {
-        return Config::inst()->get('TradeMeCategories', 'trade_me_categories');
+        return Config::inst()->get(TradeMeCategories::class, 'trade_me_categories');
     }
 
     public static function get_title_from_id($categoryID): string
     {
         $array = self::get_categories();
-        if(! $categoryID) {
-            $categoryID = Config::inst()->get('TradeMeCategories', 'trade_me_default');
+        if (! $categoryID) {
+            $categoryID = Config::inst()->get(TradeMeCategories::class, 'trade_me_default');
         }
         return $array[$categoryID] ?? 'unknown category';
     }
@@ -38,6 +53,7 @@ class TradeMeCategories extends Object
             TradeMeCategories::get_categories()
         );
     }
+
     public static function calculated_categories_field($object)
     {
         $calculatedCategory = $object->getCalculatedTradeMeCategory();
@@ -49,9 +65,8 @@ class TradeMeCategories extends Object
             )->setDescription('
                     The TradeMe Category for this Category/Product is set by one of the parent Product Categories.
                 ');
-        } else {
-            return HiddenField::create('CalculatedCategory');
         }
+        return HiddenField::create('CalculatedCategory');
     }
 
     public static function get_trade_me_categories()

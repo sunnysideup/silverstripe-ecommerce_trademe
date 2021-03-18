@@ -1,12 +1,18 @@
 <?php
 
+namespace Sunnysideup\EcommerceTrademe\Tasks;
+
+use SilverStripe\Control\Director;
+use SilverStripe\Dev\BuildTask;
+use SilverStripe\ORM\DB;
+use Sunnysideup\EcommerceTrademe\Api\CsvFunctionality;
+use Sunnysideup\EcommerceTrademe\Control\TradeMeAssignProductController;
 
 /**
  * create CSV for TradeMe
  */
 class CreateTradeMeCsvTask extends BuildTask
 {
-
     public const MAX_IMAGES = 7;
 
     //private const SUBTITLE = 'NZ Based Company – Full manufactures Warranty – 30+ years in business';
@@ -82,29 +88,28 @@ class CreateTradeMeCsvTask extends BuildTask
 
     protected $verbose = true;
 
+    protected $html = '';
+
     public function setVerbose(bool $b)
     {
         $this->verbose = $b;
 
-        return  $this;
+        return $this;
     }
-
-    protected $html = '';
 
     public function getHtml()
     {
         return $this->html;
     }
 
-
     /**
      * Run
      */
     public function run($request)
     {
-        increase_time_limit_to(600);
+        Silverstripe\Core\Environment::increaseTimeLimitTo(600);
         $this->debug = empty($_GET['details']) ? false : true;
-        if(! $this->debug) {
+        if (! $this->debug) {
             $this->output('<h4>Add ?details=1 to your URL to see all the details on screen...</h4>');
         }
         //get details
@@ -112,10 +117,45 @@ class CreateTradeMeCsvTask extends BuildTask
         $data = CsvFunctionality::convertToCSV($this->getData(), ',');
         //set file
         file_put_contents($pathToFile, $data);
-        $this->output('<h1><a href="'.ExportToTradeMeTask::url_location().'">Download Results</a></h1>');
-        if(Director::isLive()) {
+        $this->output('<h1><a href="' . ExportToTradeMeTask::url_location() . '">Download Results</a></h1>');
+        if (Director::isLive()) {
             $this->output('<h1>NEXT: <a href="/dev/tasks/ExportToTradeMeTask/">Export data to to TradeMe</a></h1>');
         }
+    }
+
+    public function getBestImage($product): string
+    {
+        $list = $this->getBestImages($product);
+
+        return empty($list) ? '' : array_shift($list);
+    }
+
+    public function getBestImages($product): array
+    {
+        $imageCollection = [
+            $product->TradeMeImage(),
+            $product->Image(),
+        ];
+        foreach ($product->AdditionalImages() as $image) {
+            $imageCollection[] = $image;
+        }
+        $fileNames = [];
+        foreach ($imageCollection as $image) {
+            if ($image && $image->exists()) {
+                $link = '';
+                if ($image->getWidth() >= $this->minImageWidth && $image->getHeight() >= $this->minImageHeight) {
+                    $link = $image->AbsoluteLink();
+                } elseif ($image->getWidth()) {
+                    $link = $image->Pad($this->minImageWidth, $this->minImageHeight)->Link();
+                }
+                if ($link) {
+                    $link = Director::absoluteUrl($link);
+                    $fileNames[] = $link;
+                }
+            }
+        }
+
+        return $fileNames;
     }
 
     /**
@@ -128,38 +168,39 @@ class CreateTradeMeCsvTask extends BuildTask
         $categoryListings = [];
         $countForReal = 0;
 
-        $products =  TradeMeAssignProductController::base_list()
+        $products = TradeMeAssignProductController::base_list()
             ->filter(['ID' => $this->getIDsOfProducts()])
             ->sort('InternalItemID');
         $this->output('There are ' . $products->count() . ' potential products to be listed on TradeMe.', 'good');
-        foreach($products as $product) {
+        foreach ($products as $product) {
             $innerArray = [];
             $data = $product->getTradeMeData($this->fields);
-            if($this->debug) {
-                echo '<h4>'.$product->Title.'</h4>';
+            if ($this->debug) {
+                echo '<h4>' . $product->Title . '</h4>';
                 $data['Data'] = array_combine(array_keys($this->fields), $data['Data']);
-                echo '<pre>'.print_r($data, 1).'</pre>';
+                echo '<pre>' . print_r($data, 1) . '</pre>';
             }
-            foreach($data['Data'] as $key => $value) {
+            foreach ($data['Data'] as $value) {
                 $innerArray[] = CsvFunctionality::removeBadCharacters($value);
             }
-            if(!empty($data['Include'])) {
-                if(empty($categoryListings[$data['TradeMeCategory']])) {
+            if (! empty($data['Include'])) {
+                if (empty($categoryListings[$data['TradeMeCategory']])) {
                     $categoryListings[$data['TradeMeCategory']] = [];
                 }
-                $categoryListings[$data['TradeMeCategory']][] = '<a href="/'.$product->CMSEditLink().'">' . $product->InternalItemID.' - '.$product->Title . '</a>';
+                $categoryListings[$data['TradeMeCategory']][] = '<a href="/' . $product->CMSEditLink() . '">' . $product->InternalItemID . ' - ' . $product->Title . '</a>';
                 $countForReal++;
             }
-            if(! empty($data['HasError'])) {
-                if(! isset($data['HasError'])) {
+            if (! empty($data['HasError'])) {
+                if (! isset($data['HasError'])) {
                     $data['HasError'] = 'Unknown Error';
                 }
-                $this->output('Error: '.$data['ErrorMessage'], 'bad');
+                $this->output('Error: ' . $data['ErrorMessage'], 'bad');
             }
             $array[] = $innerArray;
         }
 
-        $this->output('
+        $this->output(
+            '
             After review, there are ' . $countForReal . ' products that will actually be listed on TradeMe,
             The rest are out of stock or have some other issue.
             Below is a list by TradeMe Category.',
@@ -173,14 +214,11 @@ class CreateTradeMeCsvTask extends BuildTask
         return $array;
     }
 
-
-
-
     /**
      * we use this method to pre-select products that are eligible:
      * see WHERE statement for LOGIC
      */
-    protected function getIDsOfProducts() : array
+    protected function getIDsOfProducts(): array
     {
 
         //get all the products that are applicable
@@ -206,66 +244,28 @@ class CreateTradeMeCsvTask extends BuildTask
         ';
         $rows = DB::query($sql);
         $array = [0];
-        foreach($rows as $row) {
+        foreach ($rows as $row) {
             $array[$row['ProductID']] = $row['ProductID'];
         }
         return $array;
     }
 
-
-    public function getBestImage($product) : string
-    {
-        $list = $this->getBestImages($product);
-
-        return empty($list) ? '' :  array_shift($list);
-    }
-
-    public function getBestImages($product) : array
-    {
-        $imageCollection = [
-            $product->TradeMeImage(),
-            $product->Image(),
-        ];
-        foreach($product->AdditionalImages() as $image) {
-            $imageCollection[] = $image;
-        }
-        $fileNames = [];
-        foreach($imageCollection as $key => $image) {
-            if($image && $image->exists()) {
-                $link = '';
-                if($image->getWidth() >= $this->minImageWidth && $image->getHeight() >= $this->minImageHeight) {
-                    $link = $image->AbsoluteLink();
-                } elseif($image->getWidth()) {
-                    $link = $image->Pad($this->minImageWidth, $this->minImageHeight)->Link();
-                }
-                if($link) {
-                    $link = Director::absoluteUrl($link);
-                    $fileNames[] = $link;
-                }
-            }
-        }
-
-        return $fileNames;
-    }
-
-    protected function arrayToHtml( array $array ) : string
+    protected function arrayToHtml(array $array): string
     {
         $html = '<ul>';
-        foreach ( $array as $key => $value ) {
-            if(is_array($value)) {
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
                 $html .= '<li>' . $key . ':' . $this->arrayToHtml($value) . '</li>';
             } else {
                 $html .= '<li>' . $value . '</li>';
             }
         }
-        $html .= '</ul>';
-
-        return $html;
+        return $html . '</ul>';
     }
 
     protected function output(string $msg, ?string $style = '')
     {
-        switch($style) {
+        switch ($style) {
             case 'good':
             case 'created':
                 $colour = 'green';
@@ -281,12 +281,11 @@ class CreateTradeMeCsvTask extends BuildTask
             default:
                 $colour = 'black';
         }
-        $msg = '<div style="color: '.$colour.';">'.$msg.'</div>';
-        if($this->verbose) {
+        $msg = '<div style="color: ' . $colour . ';">' . $msg . '</div>';
+        if ($this->verbose) {
             echo $msg;
         } else {
             $this->html .= $msg;
         }
     }
-
 }

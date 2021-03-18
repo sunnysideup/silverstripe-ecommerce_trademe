@@ -1,10 +1,10 @@
-<% include TradeMeAssignControllerHeader %>
+<% include Sunnysideup\EcommerceTrademe\IncludesTradeMeAssignControllerHeader %>
 <body>
     <div class="form-holder-trade-me">
         <div class="intro">
             <h1>$Title</h1>
-            <% include TradeMeAssignControllerFilter %>
-            <% include TradeMeAssignControllerOtherLinks %>
+            <% include Sunnysideup\EcommerceTrademe\IncludesTradeMeAssignControllerFilter %>
+            <% include Sunnysideup\EcommerceTrademe\IncludesTradeMeAssignControllerOtherLinks %>
             <h4>
                 Below is a list of of all products
                 <% if $ProductGroup.Title %>
@@ -22,10 +22,10 @@
             </h4>
 
         </div>
-        <% include TradeMeAssignControllerPagination %>
+        <% include Sunnysideup\EcommerceTrademe\IncludesTradeMeAssignControllerPagination %>
         $Form
-        <% include TradeMeAssignControllerPagination %>
-        <% include TradeMeAssignControllerOtherLinks %>
+        <% include Sunnysideup\EcommerceTrademe\IncludesTradeMeAssignControllerPagination %>
+        <% include Sunnysideup\EcommerceTrademe\IncludesTradeMeAssignControllerOtherLinks %>
     </div>
 </body>
 </html>

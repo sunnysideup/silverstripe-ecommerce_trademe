@@ -1,0 +1,13 @@
+mappings:
+  CsvFunctionality: Sunnysideup\EcommerceTrademe\Api\CsvFunctionality
+  TradeMeCategories: Sunnysideup\EcommerceTrademe\Api\TradeMeCategories
+  TradeMeGenericCmsFieldsProvider: Sunnysideup\EcommerceTrademe\Api\TradeMeGenericCmsFieldsProvider
+  TradeMeAssignProductController: Sunnysideup\EcommerceTrademe\Control\TradeMeAssignProductController
+  TradeMeAssignGroupController: Sunnysideup\EcommerceTrademe\Control\TradeMeAssignGroupController
+  CreateTradeMeCsvTask: Sunnysideup\EcommerceTrademe\Tasks\CreateTradeMeCsvTask
+  ExportToTradeMeTask: Sunnysideup\EcommerceTrademe\Tasks\ExportToTradeMeTask
+  ResetTradeMeTaskHard: Sunnysideup\EcommerceTrademe\Tasks\ResetTradeMeTaskHard
+  ResetTradeMeTask: Sunnysideup\EcommerceTrademe\Tasks\ResetTradeMeTask
+  EcommerceConfigTradeMeExtension: Sunnysideup\EcommerceTrademe\Extensions\EcommerceConfigTradeMeExtension
+  ProductGroupTradeMeExtension: Sunnysideup\EcommerceTrademe\Extensions\ProductGroupTradeMeExtension
+  ProductTradeMeExtension: Sunnysideup\EcommerceTrademe\Extensions\ProductTradeMeExtension

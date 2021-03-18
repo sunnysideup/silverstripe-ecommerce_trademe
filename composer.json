@@ -1,6 +1,6 @@
 {
     "name": "sunnysideup/ecommerce_trademe",
-    "type": "silverstripe-module",
+    "type": "silverstripe-vendormodule",
     "description": "Upload your silverstripe e-commerce products to TradeMe (New Zealand version of E-Bay and the like).",
     "keywords": [
         "Silverstripe-CMS",
@@ -22,9 +22,12 @@
     ],
     "require": {
         "sunnysideup/ecommerce": "*",
-        "silverstripe/framework": "~3.6"
+        "silverstripe/recipe-cms": "^4.4"
     },
-    "extra": {
-        "installer-name": "ecommerce_trademe"
+    "extra": [],
+    "autoload": {
+        "psr-4": {
+            "Sunnysideup\\EcommerceTrademe\\": "src/"
+        }
     }
 }

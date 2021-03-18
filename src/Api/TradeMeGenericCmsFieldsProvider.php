@@ -1,23 +1,28 @@
 <?php
 
+namespace Sunnysideup\EcommerceTrademe\Api;
+
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Forms\ReadonlyField;
+use SilverStripe\ORM\FieldType\DBField;
+use Sunnysideup\EcommerceTrademe\Control\TradeMeAssignGroupController;
+use Sunnysideup\EcommerceTrademe\Control\TradeMeAssignProductController;
+
 class TradeMeGenericCmsFieldsProvider
 {
-
     /**
-     *
-     * @param  ProductGroup|null
+     * @param  ProductGroup $group|null
      * @return array[FormField]
      */
-    public static function get_fields($group = null, $showConfigLink = false) : array
+    public static function get_fields($group = null, $showConfigLink = false): array
     {
-
-        if($group && $group->exists()) {
+        if ($group && $group->exists()) {
             $productField = ReadonlyField::create(
                 'TradeMeLink2',
                 'Products',
                 DBField::create_field(
                     'HTMLText',
-                    '<a href="'.TradeMeAssignProductController::my_link('', ['parentid' => $group->ID]).'">edit products in <strong>'.$group->Title.'</strong></a>'
+                    '<a href="' . TradeMeAssignProductController::my_link('', ['parentid' => $group->ID]) . '">edit products in <strong>' . $group->Title . '</strong></a>'
                 )
             );
         } else {
@@ -26,13 +31,12 @@ class TradeMeGenericCmsFieldsProvider
                 'Products',
                 DBField::create_field(
                     'HTMLText',
-                    '<a href="'.TradeMeAssignProductController::my_link().'">edit products in categories</a>'
+                    '<a href="' . TradeMeAssignProductController::my_link() . '">edit products in categories</a>'
                 )
             );
-
         }
 
-        $link = '/dev/tasks/'. Config::inst()->get('TradeMeAssignGroupController', 'create_trademe_csv_task_class_name');
+        $link = '/dev/tasks/' . Config::inst()->get(TradeMeAssignGroupController::class, 'create_trademe_csv_task_class_name');
 
         $ar = [
             ReadonlyField::create(
@@ -40,7 +44,7 @@ class TradeMeGenericCmsFieldsProvider
                 'Categories',
                 DBField::create_field(
                     'HTMLText',
-                    '<a href="'.TradeMeAssignGroupController::my_link().'">edit all categories</a>'
+                    '<a href="' . TradeMeAssignGroupController::my_link() . '">edit all categories</a>'
                 )
             ),
             $productField,
@@ -49,12 +53,12 @@ class TradeMeGenericCmsFieldsProvider
                 'Export',
                 DBField::create_field(
                     'HTMLText',
-                    '<a href="dev/tasks/'.Config::inst()->get('TradeMeAssignGroupController', 'create_trademe_csv_task_class_name').'">Export to TradeMe</a>'
+                    '<a href="dev/tasks/' . Config::inst()->get(TradeMeAssignGroupController::class, 'create_trademe_csv_task_class_name') . '">Export to TradeMe</a>'
                 )
             ),
         ];
-        if($showConfigLink) {
-            $ar[] =  ReadonlyField::create(
+        if ($showConfigLink) {
+            $ar[] = ReadonlyField::create(
                 'TradeMeLink3',
                 'Export',
                 DBField::create_field(
@@ -63,16 +67,14 @@ class TradeMeGenericCmsFieldsProvider
                 )
             );
         }
-        $ar [] = ReadonlyField::create(
+        $ar[] = ReadonlyField::create(
             'ExportToTradeMeNow',
             'Export To TradeMe',
             DBField::create_field(
                 'HTMLText',
-                '<a href="'.$link.'">Start export process now</a>'
+                '<a href="' . $link . '">Start export process now</a>'
             )
         );
         return $ar;
-
     }
-
 }

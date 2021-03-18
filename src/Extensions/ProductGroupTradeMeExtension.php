@@ -1,9 +1,28 @@
 <?php
+
+namespace Sunnysideup\EcommerceTrademe\Extensions;
+
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\OptionsetField;
+use SilverStripe\ORM\DataExtension;
+use Sunnysideup\Ecommerce\Pages\ProductGroup;
+use Sunnysideup\EcommerceTrademe\Api\TradeMeCategories;
+use Sunnysideup\EcommerceTrademe\Api\TradeMeGenericCmsFieldsProvider;
+
 /**
  * Product Group is a 'holder' for Products within the CMS
  * It contains functions for versioning child products
  *
  * @package ecommerce
+ */
+
+/**
+ * ### @@@@ START REPLACEMENT @@@@ ###
+ * WHY: automated upgrade
+ * OLD:  extends DataExtension (ignore case)
+ * NEW:  extends DataExtension (COMPLEX)
+ * EXP: Check for use of $this->anyVar and replace with $this->anyVar[$this->owner->ID] or consider turning the class into a trait
+ * ### @@@@ STOP REPLACEMENT @@@@ ###
  */
 class ProductGroupTradeMeExtension extends DataExtension
 {
@@ -31,8 +50,6 @@ class ProductGroupTradeMeExtension extends DataExtension
                 TradeMeGenericCmsFieldsProvider::get_fields($this->owner, true)
             )
         );
-
-
     }
 
     public function onBeforeWrite()

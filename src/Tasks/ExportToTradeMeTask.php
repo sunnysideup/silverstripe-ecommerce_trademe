@@ -1,5 +1,10 @@
 <?php
 
+namespace Sunnysideup\EcommerceTrademe\Tasks;
+
+use SilverStripe\Assets\Filesystem;
+use SilverStripe\Control\Director;
+use SilverStripe\Dev\BuildTask;
 
 /**
  * Sends listings to trademe
@@ -36,15 +41,14 @@ class ExportToTradeMeTask extends BuildTask
     public function run($request)
     {
         $connection = ftp_connect($this->Config()->get('ftp_location'));
-        if($connection) {
+        if ($connection) {
             $login = ftp_login(
                 $connection,
                 $this->Config()->get('username'),
                 $this->Config()->get('password')
             );
-            ftp_pasv ( $connection, true );
+            ftp_pasv($connection, true);
             if ($login) {
-
                 $upload = ftp_put($connection, 'In/products.csv', self::file_location(), FTP_BINARY);
 
                 if (! $upload) {
@@ -60,11 +64,9 @@ class ExportToTradeMeTask extends BuildTask
         } else {
             user_error('We could not connect to FTP');
         }
-
     }
 
-
-    public static function file_location() : string
+    public static function file_location(): string
     {
         $path = Director::baseFolder() . '/trademe_data/';
         Filesystem::makeFolder($path);
@@ -72,8 +74,8 @@ class ExportToTradeMeTask extends BuildTask
         return $path . 'products.csv';
     }
 
-    public static function  url_location()
+    public static function url_location()
     {
-        return str_replace(Director::baseFolder() .'/', Director::absoluteURL('/'), self::file_location());
+        return str_replace(Director::baseFolder() . '/', Director::absoluteURL('/'), self::file_location());
     }
 }
