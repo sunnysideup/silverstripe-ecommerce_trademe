@@ -158,9 +158,6 @@ class CreateTradeMeCsvTask extends BuildTask
         return $fileNames;
     }
 
-    /**
-     * @return array
-     */
     protected function getData(): array
     {
         $array = [];

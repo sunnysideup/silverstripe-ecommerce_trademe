@@ -11,7 +11,6 @@ use Sunnysideup\EcommerceTrademe\Control\TradeMeAssignProductController;
 class TradeMeGenericCmsFieldsProvider
 {
     /**
-     * @param  ProductGroup $group|null
      * @return array[FormField]
      */
     public static function get_fields($group = null, $showConfigLink = false): array

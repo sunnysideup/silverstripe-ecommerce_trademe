@@ -116,7 +116,6 @@ class ProductTradeMeExtension extends Extension
      * looks at TradeMe Category from the product itself
      * and it not found goes up the line (parent , parent.parent, etc...)
      * to find the applicable trade me category.
-     * @return int
      */
     public function getCalculatedTradeMeCategory(): int
     {
@@ -138,7 +137,6 @@ class ProductTradeMeExtension extends Extension
 
     /**
      * returns the right trade me category.
-     * @return int
      */
     public function CalculatedTradeMeCategoryWithDefaultAndAdjustments(): int
     {
@@ -159,7 +157,6 @@ class ProductTradeMeExtension extends Extension
      * returns the title of the product for TradeMe.
      *
      * @param  boolean $checkLimit
-     * @return string
      */
     public function getTradeMeTitle(?bool $checkLimit = true): string
     {
@@ -174,7 +171,6 @@ class ProductTradeMeExtension extends Extension
 
     /**
      * @param  boolean $checkLimit
-     * @return string
      */
     public function getTradeMeContent(?bool $checkLimit = true): string
     {
