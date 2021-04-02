@@ -81,7 +81,6 @@ class ProductTradeMeExtension extends Extension
 
     /**
      * stadard SS method
-     * @return FieldList
      */
     public function updateCMSFields(FieldList $fields)
     {
