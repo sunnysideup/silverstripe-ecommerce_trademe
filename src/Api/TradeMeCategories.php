@@ -69,7 +69,7 @@ class TradeMeCategories extends ViewableData
         return HiddenField::create('CalculatedCategory');
     }
 
-    public static function get_trade_me_categories() : array
+    public static function get_trade_me_categories(): array
     {
         $categories = [];
         foreach (self::get_categories() as $id => $category) {
