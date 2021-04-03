@@ -7,7 +7,7 @@ use SilverStripe\Control\Director;
 use SilverStripe\Dev\BuildTask;
 
 /**
- * Sends listings to trademe
+ * Sends listings to trademe.
  */
 class ExportToTradeMeTask extends BuildTask
 {
@@ -36,7 +36,9 @@ class ExportToTradeMeTask extends BuildTask
     private static $folder_to_upload_to = 'In';
 
     /**
-     * Run
+     * Run.
+     *
+     * @param mixed $request
      */
     public function run($request)
     {

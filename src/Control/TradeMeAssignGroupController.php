@@ -56,8 +56,7 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
 
     public function index($request)
     {
-
-        /**
+        /*
          * ### @@@@ START REPLACEMENT @@@@ ###
          * WHY: automated upgrade
          * OLD: ->RenderWith( (ignore case)
@@ -205,15 +204,16 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
         $al->push(ArrayData::create([
             'Link' => TradeMeAssignGroupController::my_link(),
             'Title' => 'Categories',
-            'IsCurrent' => static::class === TradeMeAssignGroupController::class,
+            'IsCurrent' => TradeMeAssignGroupController::class === static::class,
         ]));
         $al->push(ArrayData::create([
             'Link' => TradeMeAssignProductController::my_link(),
             'Title' => 'Products',
-            'IsCurrent' => static::class === TradeMeAssignProductController::class,
+            'IsCurrent' => TradeMeAssignProductController::class === static::class,
         ]));
 
         $this->extend('getMainLinksAdditional', $al);
+
         return $al;
     }
 
@@ -268,7 +268,7 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
      * OLD:     public function init() (ignore case)
      * NEW:     protected function init() (COMPLEX)
      * EXP: Controller init functions are now protected  please check that is a controller.
-     * ### @@@@ STOP REPLACEMENT @@@@ ###
+     * ### @@@@ STOP REPLACEMENT @@@@ ###.
      */
     protected function init()
     {
@@ -296,6 +296,7 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
             $options = $this->getListProductsOnTradeMeOptions();
             if (! in_array($this->getParams['filter'], $options, true)) {
                 $this->getParams['filter'] = '';
+
                 return $this->httpError('404', 'Category does not exist');
             }
         }
@@ -307,6 +308,7 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
         if ($this->getParams['filter']) {
             $list = $list->filter(['ListProductsOnTradeMe' => $this->getParams['filter']]);
         }
+
         return $list;
     }
 
@@ -324,6 +326,7 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
         foreach ($this->getParams as $key => $value) {
             $arrayOfFields[] = HiddenField::create($key)->setValue($value);
         }
+
         return $arrayOfFields;
     }
 
@@ -332,18 +335,18 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
         $updateCount = 0;
         foreach ($data as $key => $value) {
             $array = explode('___', $key);
-            if (count($array) === 3) {
+            if (3 === count($array)) {
                 $field = $array[0];
                 $type = $array[1];
                 $groupId = intval($array[2]);
-                if ($field === 'ListProductsOnTradeMe' && $type === 'GROUP') {
+                if ('ListProductsOnTradeMe' === $field && 'GROUP' === $type) {
                     $group = ProductGroup::get()->byID($groupId);
                     if ($group) {
                         if ($group->ListProductsOnTradeMe !== $value) {
                             $group->ListProductsOnTradeMe = $value;
                             $group->writeToStage('Stage');
                             $group->publish('Stage', 'Live');
-                            $updateCount++;
+                            ++$updateCount;
                         }
                     } else {
                         user_error('Could not find Category based on ' . $key);
