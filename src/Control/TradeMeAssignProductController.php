@@ -96,6 +96,7 @@ class TradeMeAssignProductController extends TradeMeAssignGroupController
         if ($this->productGroup) {
             return 'TradeMe Settings for "' . $this->productGroup->Title . '"';
         }
+
         return 'TradeMe Settings for Products';
     }
 
@@ -104,18 +105,18 @@ class TradeMeAssignProductController extends TradeMeAssignGroupController
         $updateCount = 0;
         foreach ($data as $key => $value) {
             $array = explode('___', $key);
-            if (count($array) === 3) {
+            if (3 === count($array)) {
                 $field = $array[0];
                 $type = $array[1];
                 $productID = intval($array[2]);
-                if ($type === 'PRODUCT' && $field === 'ShowOnTradeMe') {
+                if ('PRODUCT' === $type && 'ShowOnTradeMe' === $field) {
                     $product = Product::get()->byID($productID);
                     if ($product) {
                         if ($product->ShowOnTradeMe !== $value) {
                             $product->ShowOnTradeMe = $value;
                             $product->writeToStage('Stage');
                             $product->publish('Stage', 'Live');
-                            $updateCount++;
+                            ++$updateCount;
                         }
                     } else {
                         user_error('Could not find Product based on ' . $key);

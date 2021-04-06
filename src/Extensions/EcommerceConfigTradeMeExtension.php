@@ -10,8 +10,6 @@ use Sunnysideup\EcommerceTrademe\Api\TradeMeGenericCmsFieldsProvider;
 /**
  * EcommerceRole provides customisations to the {@link Member}
  * class specifically for this ecommerce module.
- *
- * @package ecommerce
  */
 
 /**
@@ -20,7 +18,7 @@ use Sunnysideup\EcommerceTrademe\Api\TradeMeGenericCmsFieldsProvider;
  * OLD:  extends DataExtension (ignore case)
  * NEW:  extends DataExtension (COMPLEX)
  * EXP: Check for use of $this->anyVar and replace with $this->anyVar[$this->owner->ID] or consider turning the class into a trait
- * ### @@@@ STOP REPLACEMENT @@@@ ###
+ * ### @@@@ STOP REPLACEMENT @@@@ ###.
  */
 class EcommerceConfigTradeMeExtension extends DataExtension
 {
@@ -36,7 +34,6 @@ class EcommerceConfigTradeMeExtension extends DataExtension
             array_merge(
                 [
                     TextareaField::create('TradeMeIntro'),
-
                 ],
                 TradeMeGenericCmsFieldsProvider::get_fields()
             )

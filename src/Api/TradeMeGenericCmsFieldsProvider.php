@@ -11,7 +11,9 @@ use Sunnysideup\EcommerceTrademe\Control\TradeMeAssignProductController;
 class TradeMeGenericCmsFieldsProvider
 {
     /**
-     * @param  ProductGroup $group|null
+     * @param null|mixed $group
+     * @param mixed      $showConfigLink
+     *
      * @return array[FormField]
      */
     public static function get_fields($group = null, $showConfigLink = false): array
@@ -75,6 +77,7 @@ class TradeMeGenericCmsFieldsProvider
                 '<a href="' . $link . '">Start export process now</a>'
             )
         );
+
         return $ar;
     }
 }

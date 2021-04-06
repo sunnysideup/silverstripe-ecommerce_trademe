@@ -6,7 +6,7 @@ use SilverStripe\Dev\BuildTask;
 use SilverStripe\ORM\DB;
 
 /**
- * create CSV for TradeMe
+ * create CSV for TradeMe.
  */
 class ResetTradeMeTask extends BuildTask
 {
@@ -31,7 +31,9 @@ class ResetTradeMeTask extends BuildTask
     protected $debug = false;
 
     /**
-     * Run
+     * Run.
+     *
+     * @param mixed $request
      */
     public function run($request)
     {

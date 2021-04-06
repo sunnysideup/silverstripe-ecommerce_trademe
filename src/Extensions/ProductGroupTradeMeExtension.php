@@ -11,9 +11,7 @@ use Sunnysideup\EcommerceTrademe\Api\TradeMeGenericCmsFieldsProvider;
 
 /**
  * Product Group is a 'holder' for Products within the CMS
- * It contains functions for versioning child products
- *
- * @package ecommerce
+ * It contains functions for versioning child products.
  */
 
 /**
@@ -22,7 +20,7 @@ use Sunnysideup\EcommerceTrademe\Api\TradeMeGenericCmsFieldsProvider;
  * OLD:  extends DataExtension (ignore case)
  * NEW:  extends DataExtension (COMPLEX)
  * EXP: Check for use of $this->anyVar and replace with $this->anyVar[$this->owner->ID] or consider turning the class into a trait
- * ### @@@@ STOP REPLACEMENT @@@@ ###
+ * ### @@@@ STOP REPLACEMENT @@@@ ###.
  */
 class ProductGroupTradeMeExtension extends DataExtension
 {
@@ -82,13 +80,14 @@ class ProductGroupTradeMeExtension extends DataExtension
             case 'none':
             case 'all':
                 $hasUpdate = true;
+
                 break;
             case 'some':
             default:
                 //do nothing
                 $hasUpdate = false;
         }
-        if ($hasUpdate === true) {
+        if (true === $hasUpdate) {
             $children = ProductGroup::get()->filter(['ParentID' => $this->owner->ID]);
             foreach ($children as $child) {
                 if ($child->ListProductsOnTradeMe !== $myValue) {
