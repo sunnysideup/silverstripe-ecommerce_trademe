@@ -38,8 +38,6 @@ class CreateTradeMeCsvTask extends BuildTask
         'allowBankTransfer' => 1,
         'allowCreditCard' => null,
         'allowAfterpay' => null,
-        'allowBankTransfer' => 1,
-        'allowCreditCard' => null,
         'sendPaymentInstructions' => 0,
         'shippingPrice1' => null,
         'shippingDescription1' => null,
