@@ -70,7 +70,7 @@ class ExportToTradeMeTask extends BuildTask
 
     public static function file_location(): string
     {
-        $path = Director::baseFolder() . '/'.PUBLIC_DIR.'/trademedata';
+        $path = Director::baseFolder() . '/' . PUBLIC_DIR . '/trademedata';
         Filesystem::makeFolder($path);
 
         return $path . '/' . 'products.csv';
@@ -79,7 +79,7 @@ class ExportToTradeMeTask extends BuildTask
     public static function url_location()
     {
         return str_replace(
-            Director::baseFolder() . '/'.PUBLIC_DIR.'/',
+            Director::baseFolder() . '/' . PUBLIC_DIR . '/',
             Director::absoluteURL('/'),
             self::file_location()
         );

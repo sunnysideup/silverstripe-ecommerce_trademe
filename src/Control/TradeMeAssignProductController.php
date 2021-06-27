@@ -107,9 +107,9 @@ class TradeMeAssignProductController extends TradeMeAssignGroupController
 
     /**
      * NOTE: this should not contain any redirects!
-     * @param  array $data
-     * @param  Form $form
-     * @return void
+     *
+     * @param array $data
+     * @param Form  $form
      */
     public function saveInner($data, $form)
     {

@@ -3,36 +3,18 @@
 namespace Sunnysideup\EcommerceTrademe\Tasks;
 
 use SilverStripe\Control\Director;
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Core\Environment;
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\ORM\DB;
-
-use SilverStripe\Core\Config\Config;
-
-use SilverStripe\Core\Environment;
 use Sunnysideup\EcommerceTrademe\Api\CsvFunctionality;
 use Sunnysideup\EcommerceTrademe\Control\TradeMeAssignProductController;
-
-use Sunnysideup\EcommerceTrademe\Tasks\ExportToTradeMeTask;
-
 
 /**
  * create CSV for TradeMe.
  */
 class CreateTradeMeCsvTask extends BuildTask
 {
-    public static function my_link() : string
-    {
-        $class = Config::inst()->get(CreateTradeMeCsvTask::class, 'create_trademe_csv_task_class_name');
-        $link = Config::inst()->get($class, 'segment');
-        if(! $link) {
-            $link = str_replace('\\', '-', $class);
-        }
-
-        return '/dev/tasks/' . $link;
-    }
-
-    private static $create_trademe_csv_task_class_name = self::class;
-
     public const MAX_IMAGES = 7;
 
     //private const SUBTITLE = 'NZ Based Company – Full manufactures Warranty – 30+ years in business';
@@ -110,6 +92,19 @@ class CreateTradeMeCsvTask extends BuildTask
     protected $verbose = true;
 
     protected $html = '';
+
+    private static $create_trademe_csv_task_class_name = self::class;
+
+    public static function my_link(): string
+    {
+        $class = Config::inst()->get(CreateTradeMeCsvTask::class, 'create_trademe_csv_task_class_name');
+        $link = Config::inst()->get($class, 'segment');
+        if (! $link) {
+            $link = str_replace('\\', '-', $class);
+        }
+
+        return '/dev/tasks/' . $link;
+    }
 
     public function setVerbose(bool $b)
     {

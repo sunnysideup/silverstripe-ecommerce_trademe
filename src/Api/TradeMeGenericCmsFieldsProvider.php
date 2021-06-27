@@ -2,12 +2,10 @@
 
 namespace Sunnysideup\EcommerceTrademe\Api;
 
-use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\ORM\FieldType\DBField;
 use Sunnysideup\EcommerceTrademe\Control\TradeMeAssignGroupController;
 use Sunnysideup\EcommerceTrademe\Control\TradeMeAssignProductController;
-
 use Sunnysideup\EcommerceTrademe\Tasks\CreateTradeMeCsvTask;
 
 class TradeMeGenericCmsFieldsProvider

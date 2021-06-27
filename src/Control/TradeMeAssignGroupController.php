@@ -26,7 +26,6 @@ use Sunnysideup\Ecommerce\Pages\ProductGroup;
 use Sunnysideup\EcommerceTrademe\Api\TradeMeCategories;
 use Sunnysideup\EcommerceTrademe\Tasks\CreateTradeMeCsvTask;
 
-
 class TradeMeAssignGroupController extends Controller implements PermissionProvider
 {
     protected $getParams = [];
