@@ -1,19 +1,19 @@
-<% include Sunnysideup\EcommerceTrademe\IncludesTradeMeAssignControllerHeader %>
+<% include Sunnysideup\EcommerceTrademe\Includes\TradeMeAssignControllerHeader %>
 <body>
     <div class="form-holder-trade-me">
         <div class="intro">
             <h1>$Title</h1>
-            <% include Sunnysideup\EcommerceTrademe\IncludesTradeMeAssignControllerFilter %>
-            <% include Sunnysideup\EcommerceTrademe\IncludesTradeMeAssignControllerOtherLinks %>
+            <% include Sunnysideup\EcommerceTrademe\Includes\TradeMeAssignControllerFilter %>
+            <% include Sunnysideup\EcommerceTrademe\Includes\TradeMeAssignControllerOtherLinks %>
             <h4>
                 Below is a list of all product categories on the site with their associated TradeMe Category.
-                <% if $Filter %>Filtered for <em>$Filter</em> ($FilterCount).<% end_if %>
+                You can select the rules for each category in terms of what products are sent to TradeMe.
             </h4>
         </div>
-        <% include Sunnysideup\EcommerceTrademe\IncludesTradeMeAssignControllerPagination %>
+        <% include Sunnysideup\EcommerceTrademe\Includes\TradeMeAssignControllerPagination %>
         $Form
-        <% include Sunnysideup\EcommerceTrademe\IncludesTradeMeAssignControllerPagination %>
-        <% include Sunnysideup\EcommerceTrademe\IncludesTradeMeAssignControllerOtherLinks %>
+        <% include Sunnysideup\EcommerceTrademe\Includes\TradeMeAssignControllerPagination %>
+        <% include Sunnysideup\EcommerceTrademe\Includes\TradeMeAssignControllerOtherLinks %>
     </div>
 </body>
 </html>

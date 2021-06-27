@@ -26,6 +26,7 @@ use Sunnysideup\Ecommerce\Pages\ProductGroup;
 use Sunnysideup\EcommerceTrademe\Api\TradeMeCategories;
 use Sunnysideup\EcommerceTrademe\Tasks\CreateTradeMeCsvTask;
 
+
 class TradeMeAssignGroupController extends Controller implements PermissionProvider
 {
     protected $getParams = [];
@@ -39,7 +40,7 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
     /**
      * @var string
      */
-    private static $url_segment = 'admin/set-trade-me-categories';
+    private static $url_segment = 'tradmeadmin/set-trade-me-categories';
 
     private static $allowed_actions = [
         'index' => 'CMS_ACCESS_TRADE_ME',
@@ -48,22 +49,12 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
         'Form' => 'CMS_ACCESS_TRADE_ME',
     ];
 
-    private static $create_trademe_csv_task_class_name = CreateTradeMeCsvTask::class;
-
     private static $group_filter = [];
 
     private static $template = 'TradeMeAssignGroupController_Content';
 
     public function index($request)
     {
-        /*
-         * ### @@@@ START REPLACEMENT @@@@ ###
-         * WHY: automated upgrade
-         * OLD: ->RenderWith( (ignore case)
-         * NEW: ->RenderWith( (COMPLEX)
-         * EXP: Check that the template location is still valid!
-         * ### @@@@ STOP REPLACEMENT @@@@ ###
-         */
         return $this->RenderWith($this->Config()->get('template'));
     }
 
@@ -146,7 +137,7 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
                 $fieldListSortable[$breadcrumbClean]->push(
                     ReadonlyField::create(
                         'HEADER' . $name,
-                        '<a href="' . $group->CMSEditLink() . '">✎</a>',
+                        DBField::create_field('HTMLText', '<a href="' . $group->CMSEditLink() . '">✎</a>'),
                         DBField::create_field('HTMLText', $breadcrumbRaw . ' » <a href="' . $productLink . '">Edit Individual Products (' . $productCount . ')</a>')
                     )
                         ->setRightTitle(
@@ -172,19 +163,19 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
 
         $actions = $this->getFormActions();
 
-        return new Form($this, Form::class, $fields, $actions);
+        return new Form($this, 'Form', $fields, $actions);
     }
 
     public function Title()
     {
-        return 'Set TradeMe Categories';
+        return 'Select what Categories go to TradeMe';
     }
 
     public function saveandexport($data, $form)
     {
         $this->saveInner($data, $form);
 
-        $link = '/dev/tasks/' . $this->Config()->get('create_trademe_csv_task_class_name');
+        $link = CreateTradeMeCsvTask::my_link();
 
         return $this->redirect($link);
     }

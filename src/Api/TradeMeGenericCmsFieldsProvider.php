@@ -8,6 +8,8 @@ use SilverStripe\ORM\FieldType\DBField;
 use Sunnysideup\EcommerceTrademe\Control\TradeMeAssignGroupController;
 use Sunnysideup\EcommerceTrademe\Control\TradeMeAssignProductController;
 
+use Sunnysideup\EcommerceTrademe\Tasks\CreateTradeMeCsvTask;
+
 class TradeMeGenericCmsFieldsProvider
 {
     /**
@@ -38,7 +40,7 @@ class TradeMeGenericCmsFieldsProvider
             );
         }
 
-        $link = '/dev/tasks/' . Config::inst()->get(TradeMeAssignGroupController::class, 'create_trademe_csv_task_class_name');
+        $link = CreateTradeMeCsvTask::my_link();
 
         $ar = [
             ReadonlyField::create(
@@ -55,7 +57,7 @@ class TradeMeGenericCmsFieldsProvider
                 'Export',
                 DBField::create_field(
                     'HTMLText',
-                    '<a href="dev/tasks/' . Config::inst()->get(TradeMeAssignGroupController::class, 'create_trademe_csv_task_class_name') . '">Export to TradeMe</a>'
+                    '<a href="' . CreateTradeMeCsvTask::my_link() . '">Export to TradeMe</a>'
                 )
             ),
         ];

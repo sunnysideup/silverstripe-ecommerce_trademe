@@ -5,14 +5,34 @@ namespace Sunnysideup\EcommerceTrademe\Tasks;
 use SilverStripe\Control\Director;
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\ORM\DB;
+
+use SilverStripe\Core\Config\Config;
+
+use SilverStripe\Core\Environment;
 use Sunnysideup\EcommerceTrademe\Api\CsvFunctionality;
 use Sunnysideup\EcommerceTrademe\Control\TradeMeAssignProductController;
+
+use Sunnysideup\EcommerceTrademe\Tasks\ExportToTradeMeTask;
+
 
 /**
  * create CSV for TradeMe.
  */
 class CreateTradeMeCsvTask extends BuildTask
 {
+    public static function my_link() : string
+    {
+        $class = Config::inst()->get(CreateTradeMeCsvTask::class, 'create_trademe_csv_task_class_name');
+        $link = Config::inst()->get($class, 'segment');
+        if(! $link) {
+            $link = str_replace('\\', '-', $class);
+        }
+
+        return '/dev/tasks/' . $link;
+    }
+
+    private static $create_trademe_csv_task_class_name = self::class;
+
     public const MAX_IMAGES = 7;
 
     //private const SUBTITLE = 'NZ Based Company – Full manufactures Warranty – 30+ years in business';
@@ -110,7 +130,7 @@ class CreateTradeMeCsvTask extends BuildTask
      */
     public function run($request)
     {
-        Silverstripe\Core\Environment::increaseTimeLimitTo(600);
+        Environment::increaseTimeLimitTo(600);
         $this->debug = empty($_GET['details']) ? false : true;
         if (! $this->debug) {
             $this->output('<h4>Add ?details=1 to your URL to see all the details on screen...</h4>');

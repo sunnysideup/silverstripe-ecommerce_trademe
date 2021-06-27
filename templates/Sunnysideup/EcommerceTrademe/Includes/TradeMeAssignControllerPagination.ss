@@ -5,7 +5,7 @@
     <% end_if %>
     <% loop $ListForForm.PaginationSummary %>
         <% if $CurrentBool %>
-            $PageNum
+            <span>$PageNum</span>
         <% else %>
             <% if $Link %>
                 <a href="$Link">$PageNum</a>

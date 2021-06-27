@@ -30,7 +30,16 @@
             padding: calc(2vh + 2vw);
             margin-top: 60px;
         }
-
+        .separator {
+            content: '❱';
+            display: inline-block;
+            width: 0.7em;
+            height: 0.7em;
+            background-image: url(/resources/themes/base/images/icons/right-arrow.svg);
+            background-position: 50%;
+            background-repeat: no-repeat;
+            background-size: 16px 16px;
+        }
 
         /* Top sticky title */
         .form-holder-trade-me h1,
@@ -156,10 +165,28 @@
             display: inline;
         }
         .pagination {
-            background-color: #ccc;
             text-align: right;
             padding: 5px;
             margin: 10px 0;
+            background-color: #ccc;
+        }
+        .pagination span, .pagination a {
+            border-radius: 50%;
+            display: inline-block;
+            padding: 5px;
+            min-width: 1em;
+            background-color: orange;
+            text-align: center;
+            margin-left: 0.5em;
+        }
+        .pagination span {
+            background-color: #fff;
+        }
+        .pagination a.next, .pagination a.prev {
+            background-color: transparent;
+        }
+        .pagination span:hover, .pagination a:hover {
+            background-color: #fff;
         }
         .float-left {
             float: left;
