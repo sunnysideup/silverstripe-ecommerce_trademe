@@ -6,8 +6,7 @@
             <% include Sunnysideup\EcommerceTrademe\Includes\TradeMeAssignControllerFilter %>
             <% include Sunnysideup\EcommerceTrademe\Includes\TradeMeAssignControllerOtherLinks %>
             <h4>
-                Below is a list of all product categories on the site with their associated TradeMe Category.
-                You can select the rules for each category in terms of what products are sent to TradeMe.
+                $Explanation
             </h4>
         </div>
         <% include Sunnysideup\EcommerceTrademe\Includes\TradeMeAssignControllerPagination %>
