@@ -96,7 +96,7 @@ class TradeMeAssignProductController extends TradeMeAssignGroupController
         return $this->productGroup;
     }
 
-    public function Title() : string
+    public function Title(): string
     {
         if ($this->productGroup) {
             return 'Select what Products in the "' . $this->productGroup->Title . '" category go to TradeMe';
@@ -105,7 +105,7 @@ class TradeMeAssignProductController extends TradeMeAssignGroupController
         return 'Select what Products go to TradeMe';
     }
 
-    public function Description() : string
+    public function Description(): string
     {
         return 'Below is a list of all product categories on the site with their associated TradeMe Category.
         You can select the rules for each category in terms of what products are sent to TradeMe.';
