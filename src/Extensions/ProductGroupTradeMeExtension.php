@@ -19,7 +19,7 @@ use Sunnysideup\EcommerceTrademe\Api\TradeMeGenericCmsFieldsProvider;
  * WHY: automated upgrade
  * OLD:  extends DataExtension (ignore case)
  * NEW:  extends DataExtension (COMPLEX)
- * EXP: Check for use of $this->anyVar and replace with $this->anyVar[$this->owner->ID] or consider turning the class into a trait
+ * EXP: Check for use of $this->anyVar and replace with $this->anyVar[$this->getOwner()->ID] or consider turning the class into a trait
  * ### @@@@ STOP REPLACEMENT @@@@ ###.
  */
 class ProductGroupTradeMeExtension extends DataExtension
@@ -37,8 +37,8 @@ class ProductGroupTradeMeExtension extends DataExtension
                 [
                     OptionsetField::create(
                         'ListProductsOnTradeMe',
-                        'List ' . $this->owner->Title . ' on TradeMe?',
-                        $this->owner->dbObject('ListProductsOnTradeMe')->enumValues()
+                        'List ' . $this->getOwner()->Title . ' on TradeMe?',
+                        $this->getOwner()->dbObject('ListProductsOnTradeMe')->enumValues()
                     )->setDescription('
                         Careful - saving this will also change the value for any underlying categories.
                         <br />E.g. If you set this value for Vegetables, it will also apply to Brocoli'),
@@ -52,7 +52,7 @@ class ProductGroupTradeMeExtension extends DataExtension
 
     public function onBeforeWrite()
     {
-        $this->owner->updateChildGroupsForTradeMe();
+        $this->getOwner()->updateChildGroupsForTradeMe();
     }
 
     public function getCalculatedTradeMeCategory(): int
@@ -70,12 +70,12 @@ class ProductGroupTradeMeExtension extends DataExtension
 
     public function CalculatedTradeMeCategoryWithDefaultAndAdjustments(): int
     {
-        return $this->owner->getCalculatedTradeMeCategory();
+        return $this->getOwner()->getCalculatedTradeMeCategory();
     }
 
     public function updateChildGroupsForTradeMe()
     {
-        $myValue = $this->owner->ListProductsOnTradeMe;
+        $myValue = $this->getOwner()->ListProductsOnTradeMe;
         switch ($myValue) {
             case 'none':
             case 'all':
@@ -88,7 +88,7 @@ class ProductGroupTradeMeExtension extends DataExtension
                 $hasUpdate = false;
         }
         if (true === $hasUpdate) {
-            $children = ProductGroup::get()->filter(['ParentID' => $this->owner->ID]);
+            $children = ProductGroup::get()->filter(['ParentID' => $this->getOwner()->ID]);
             foreach ($children as $child) {
                 if ($child->ListProductsOnTradeMe !== $myValue) {
                     $child->ListProductsOnTradeMe = $myValue;
