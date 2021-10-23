@@ -59,10 +59,10 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
 
     public function getFilter()
     {
-        return $this->getParams['filter'];
+        return $this->getParams['filter'] ?? '';
     }
 
-    public function getFilterCount()
+    public function getFilterCount() : int
     {
         return $this->getListForForm()->count();
     }
@@ -116,8 +116,9 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
         foreach ($this->getListForForm() as $group) {
             $productList = TradeMeAssignProductController::base_list();
             $productList = $productList->filter(['ParentID' => $group->ID]);
-            $productCount = $productList->count();
-            if ($productCount) {
+            $productCountExists = $productList->exists();
+            if ($productCountExists) {
+                $productCount = $productList->count();
                 $productLink = TradeMeAssignProductController::my_link('', ['parentid' => $group->ID]);
                 $name = '___GROUP___' . $group->ID;
                 $breadcrumb = $group->Breadcrumbs();
