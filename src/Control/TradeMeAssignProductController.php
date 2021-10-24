@@ -48,7 +48,7 @@ class TradeMeAssignProductController extends TradeMeAssignGroupController
                     ->setValue($product->ShowOnTradeMe)
                     ->addExtraClass('float-left')
             );
-            $parent = $product->Parent();
+            $parent = $product->ParentGroup();
             $fields->push(
                 ReadonlyField::create(
                     'HEADER' . $name,
