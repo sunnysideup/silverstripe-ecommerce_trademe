@@ -62,7 +62,7 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
         return $this->getParams['filter'] ?? '';
     }
 
-    public function getFilterCount() : int
+    public function getFilterCount(): int
     {
         return $this->getListForForm()->count();
     }
