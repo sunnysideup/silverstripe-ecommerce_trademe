@@ -62,7 +62,7 @@ class ProductGroupTradeMeExtension extends DataExtension
             if ($parent->TradeMeCategoryID) {
                 return $parent->TradeMeCategoryID;
             }
-            $parent = ProductGroup::get()->byID($parent->ParentID);
+            $parent = ProductGroup::get_by_id($parent->ParentID);
         }
 
         return 0;

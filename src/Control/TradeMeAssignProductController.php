@@ -127,7 +127,7 @@ class TradeMeAssignProductController extends TradeMeAssignGroupController
                 $type = $array[1];
                 $productID = intval($array[2]);
                 if ('PRODUCT' === $type && 'ShowOnTradeMe' === $field) {
-                    $product = Product::get()->byID($productID);
+                    $product = Product::get_by_id($productID);
                     if ($product) {
                         if ($product->ShowOnTradeMe !== $value) {
                             $product->ShowOnTradeMe = $value;
@@ -172,7 +172,7 @@ class TradeMeAssignProductController extends TradeMeAssignGroupController
     protected function setGetParams()
     {
         parent::setGetParams();
-        $this->productGroup = ProductGroup::get()->byID($this->getParams['parentid']);
+        $this->productGroup = ProductGroup::get_by_id($this->getParams['parentid']);
         if ($this->getParams['parentid'] && ! $this->productGroup) {
             return $this->httpError(404, 'Could not find category with ID = ' . $this->getParams['parentid']);
         }

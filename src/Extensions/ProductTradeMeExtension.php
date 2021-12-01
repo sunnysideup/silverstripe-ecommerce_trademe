@@ -39,15 +39,11 @@ class ProductTradeMeExtension extends Extension
      * @var array
      */
     private static $has_one = [
-        /*
-         * ### @@@@ START REPLACEMENT @@@@ ###
-         * WHY: automated upgrade
-         * OLD:  => 'Image' (case sensitive)
-         * NEW:  => 'Image' (COMPLEX)
-         * EXP: you may want to add ownership (owns)
-         * ### @@@@ STOP REPLACEMENT @@@@ ###
-         */
         'TradeMeImage' => Image::class,
+    ];
+
+    private static $owns = [
+        'TradeMeImage',
     ];
 
     /**
@@ -105,7 +101,7 @@ class ProductTradeMeExtension extends Extension
                 TradeMeGenericCmsFieldsProvider::get_fields($this->getOwner()->Parent(), true)
             )
         );
-        $parent = $this->getOwner()->Parent();
+        $parent = $this->getOwner()->getParent();
         if ($parent && $parent->exists()) {
             $listOptions->setDescription('
                 Currently this product\'s main category <strong>' . $parent->Title . '</strong>
@@ -132,7 +128,7 @@ class ProductTradeMeExtension extends Extension
             if ($id) {
                 return $id;
             }
-            $parent = ProductGroup::get()->byID($parent->getOwner()->ParentID);
+            $parent = ProductGroup::get_by_id($parent->getOwner()->ParentID);
         }
 
         return 0;

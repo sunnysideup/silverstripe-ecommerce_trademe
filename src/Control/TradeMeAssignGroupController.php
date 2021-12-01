@@ -331,7 +331,7 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
                 $type = $array[1];
                 $groupId = intval($array[2]);
                 if ('ListProductsOnTradeMe' === $field && 'GROUP' === $type) {
-                    $group = ProductGroup::get()->byID($groupId);
+                    $group = ProductGroup::get_by_id($groupId);
                     if ($group) {
                         if ($group->ListProductsOnTradeMe !== $value) {
                             $group->ListProductsOnTradeMe = $value;
