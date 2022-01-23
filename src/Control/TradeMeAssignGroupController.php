@@ -20,13 +20,19 @@ use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\ORM\PaginatedList;
 use SilverStripe\Security\Permission;
 use SilverStripe\Security\PermissionProvider;
+use SilverStripe\Security\Group;
 use SilverStripe\Security\Security;
 use SilverStripe\View\ArrayData;
 use Sunnysideup\Ecommerce\Pages\ProductGroup;
+
+use Sunnysideup\Ecommerce\Model\Extensions\EcommerceRole;
 use Sunnysideup\EcommerceTrademe\Api\TradeMeCategories;
 use Sunnysideup\EcommerceTrademe\Tasks\CreateTradeMeCsvTask;
+use Sunnysideup\PermissionProvider\Interfaces\PermissionProviderFactoryProvider;
 
-class TradeMeAssignGroupController extends Controller implements PermissionProvider
+use Sunnysideup\PermissionProvider\Api\PermissionProviderFactory;
+
+class TradeMeAssignGroupController extends Controller implements PermissionProviderFactoryProvider
 {
     protected $getParams = [];
 
@@ -243,24 +249,23 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
         return $al;
     }
 
-    public function providePermissions(): array
+
+    public static function permission_provider_factory_runner() : Group
     {
-        return [
-            'CMS_ACCESS_TRADE_ME' => [
-                'name' => 'Trade Me',
-                'category' => _t('Permission.CMS_ACCESS_CATEGORY', 'CMS Access'),
-                'help' => 'Export products to TradeMe',
-            ],
-        ];
+        return PermissionProviderFactory::inst()
+            ->setParentGroup(EcommerceRole::get_category())
+
+            ->setGroupName('Trade Me')
+            ->setPermissionCode('CMS_ACCESS_TRADE_ME')
+
+
+            ->setSort(250)
+            ->setDescription('Manage products on TradeMe')
+
+            ->CreateGroupAndMember()
+        ;
     }
 
-    /**
-     * ### @@@@ START REPLACEMENT @@@@ ###
-     * OLD:     public function init() (ignore case)
-     * NEW:     protected function init() (COMPLEX)
-     * EXP: Controller init functions are now protected  please check that is a controller.
-     * ### @@@@ STOP REPLACEMENT @@@@ ###.
-     */
     protected function init()
     {
         parent::init();
