@@ -18,19 +18,16 @@ use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\ORM\PaginatedList;
-use SilverStripe\Security\Permission;
-use SilverStripe\Security\PermissionProvider;
 use SilverStripe\Security\Group;
+use SilverStripe\Security\Permission;
 use SilverStripe\Security\Security;
 use SilverStripe\View\ArrayData;
-use Sunnysideup\Ecommerce\Pages\ProductGroup;
-
 use Sunnysideup\Ecommerce\Model\Extensions\EcommerceRole;
+use Sunnysideup\Ecommerce\Pages\ProductGroup;
 use Sunnysideup\EcommerceTrademe\Api\TradeMeCategories;
 use Sunnysideup\EcommerceTrademe\Tasks\CreateTradeMeCsvTask;
-use Sunnysideup\PermissionProvider\Interfaces\PermissionProviderFactoryProvider;
-
 use Sunnysideup\PermissionProvider\Api\PermissionProviderFactory;
+use Sunnysideup\PermissionProvider\Interfaces\PermissionProviderFactoryProvider;
 
 class TradeMeAssignGroupController extends Controller implements PermissionProviderFactoryProvider
 {
@@ -249,15 +246,13 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
         return $al;
     }
 
-
-    public static function permission_provider_factory_runner() : Group
+    public static function permission_provider_factory_runner(): Group
     {
         return PermissionProviderFactory::inst()
             ->setParentGroup(EcommerceRole::get_category())
 
             ->setGroupName('Trade Me')
             ->setPermissionCode('CMS_ACCESS_TRADE_ME')
-
 
             ->setSort(250)
             ->setDescription('Manage products on TradeMe')
