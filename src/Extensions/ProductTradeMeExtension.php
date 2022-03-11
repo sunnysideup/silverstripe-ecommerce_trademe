@@ -128,7 +128,7 @@ class ProductTradeMeExtension extends Extension
             if ($id) {
                 return $id;
             }
-            $parent = ProductGroup::get_by_id($parent->getOwner()->ParentID);
+            $parent = ProductGroup::get_by_id($parent->ParentID);
         }
 
         return 0;
