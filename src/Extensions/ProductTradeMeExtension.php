@@ -13,14 +13,6 @@ use Sunnysideup\Ecommerce\Pages\ProductGroup;
 use Sunnysideup\EcommerceTrademe\Api\TradeMeCategories;
 use Sunnysideup\EcommerceTrademe\Api\TradeMeGenericCmsFieldsProvider;
 
-/**
- * ### @@@@ START REPLACEMENT @@@@ ###
- * WHY: automated upgrade
- * OLD:  extends Extension (ignore case)
- * NEW:  extends Extension (COMPLEX)
- * EXP: Check for use of $this->anyVar and replace with $this->anyVar[$this->getOwner()->ID] or consider turning the class into a trait
- * ### @@@@ STOP REPLACEMENT @@@@ ###.
- */
 class ProductTradeMeExtension extends Extension
 {
     /**
