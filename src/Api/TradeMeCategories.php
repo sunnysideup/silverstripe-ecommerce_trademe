@@ -24,12 +24,12 @@ class TradeMeCategories extends ViewableData
      *
      * @var array
      */
-    private static $trade_me_categories = 0;
+    private static $trade_me_categories = [];
 
     /**
      * default category for trademe (backup).
      *
-     * @var int
+     * @var string
      */
     private static $trade_me_default = '';
 
