@@ -3,6 +3,7 @@
 namespace Sunnysideup\EcommerceTrademe\Api;
 
 use SilverStripe\Forms\ReadonlyField;
+use SilverStripe\Forms\FormField;
 use SilverStripe\ORM\FieldType\DBField;
 use Sunnysideup\EcommerceTrademe\Control\TradeMeAssignGroupController;
 use Sunnysideup\EcommerceTrademe\Control\TradeMeAssignProductController;
@@ -11,10 +12,10 @@ use Sunnysideup\EcommerceTrademe\Tasks\CreateTradeMeCsvTask;
 class TradeMeGenericCmsFieldsProvider
 {
     /**
-     * @param null|mixed $group
+     * @param mixed      $group
      * @param mixed      $showConfigLink
      *
-     * @return array[FormField]
+     * @return FormField[]
      */
     public static function get_fields($group = null, $showConfigLink = false): array
     {
