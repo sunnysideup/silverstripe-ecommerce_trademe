@@ -4,7 +4,7 @@ namespace Sunnysideup\EcommerceTrademe\Tasks;
 
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\ORM\DB;
-
+use SilverStripe\Core\Environment;
 /**
  * create CSV for TradeMe.
  */
@@ -37,7 +37,7 @@ class ResetTradeMeTask extends BuildTask
      */
     public function run($request)
     {
-        Silverstripe\Core\Environment::increaseTimeLimitTo(600);
+        Environment::increaseTimeLimitTo(600);
         foreach (['', '_Live'] as $extension) {
             DB::query('Update "Product' . $extension . '" SET ShowOnTradeMe = \'follow category\' WHERE ShowOnTradeMe !== \'always\' AND AlwaysShowOnTradeMe <> 1;');
         }
