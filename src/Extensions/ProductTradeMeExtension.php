@@ -38,6 +38,10 @@ class ProductTradeMeExtension extends Extension
         'TradeMeImage',
     ];
 
+    private static $cascade_deletes = [
+        'TradeMeImage',
+    ];
+
     /**
      * stadard SS declaration.
      *
@@ -88,7 +92,8 @@ class ProductTradeMeExtension extends Extension
                     TradeMeCategories::categories_field(),
                     TradeMeCategories::calculated_categories_field($this->owner),
                     UploadField::create('TradeMeImage', 'TradeMeImage')
-                        ->setDescription('Recommended is a minimum size of 800px wide by 600px high.'),
+                        ->setDescription('Recommended is a minimum size of 800px wide by 600px high.')
+                        ->setFolder('trade-me-product-images'),
                 ],
                 TradeMeGenericCmsFieldsProvider::get_fields($this->getOwner()->Parent(), true)
             )

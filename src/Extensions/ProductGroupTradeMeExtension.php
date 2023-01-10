@@ -8,7 +8,7 @@ use SilverStripe\ORM\DataExtension;
 use Sunnysideup\Ecommerce\Pages\ProductGroup;
 use Sunnysideup\EcommerceTrademe\Api\TradeMeCategories;
 use Sunnysideup\EcommerceTrademe\Api\TradeMeGenericCmsFieldsProvider;
-
+use SilverStripe\Versioned\Versioned;
 /**
  * Product Group is a 'holder' for Products within the CMS
  * It contains functions for versioning child products.
@@ -92,8 +92,8 @@ class ProductGroupTradeMeExtension extends DataExtension
             foreach ($children as $child) {
                 if ($child->ListProductsOnTradeMe !== $myValue) {
                     $child->ListProductsOnTradeMe = $myValue;
-                    $child->writeToStage('Stage');
-                    $child->doPublish();
+                    $child->writeToStage(Versioned::DRAFT);
+                    $child->publishRecursive();
                 }
             }
         }
