@@ -93,7 +93,7 @@ class ProductTradeMeExtension extends Extension
                     TradeMeCategories::calculated_categories_field($this->owner),
                     UploadField::create('TradeMeImage', 'TradeMeImage')
                         ->setDescription('Recommended is a minimum size of 800px wide by 600px high.')
-                        ->setFolder('trade-me-product-images'),
+                        ->setFolderName('trade-me-product-images'),
                 ],
                 TradeMeGenericCmsFieldsProvider::get_fields($this->getOwner()->Parent(), true)
             )
