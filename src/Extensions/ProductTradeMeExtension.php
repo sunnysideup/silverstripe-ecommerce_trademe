@@ -160,7 +160,7 @@ class ProductTradeMeExtension extends Extension
         $result = str_replace('&', ' and ', $result);
         if ($checkLimit) {
             $limit = Config::inst()->get(ProductTradeMeExtension::class, 'trade_me_title_char_limit');
-            $result = substr($result, 0, $limit - 1);
+            $result = substr((string) $result, 0, $limit - 1);
         }
 
         return (string) $result;
@@ -195,7 +195,7 @@ class ProductTradeMeExtension extends Extension
         //limit
         if ($checkLimit) {
             $limit = $limit = Config::inst()->get(ProductTradeMeExtension::class, 'trade_me_title_description_limit');
-            $result = substr($result, 0, $limit - 1);
+            $result = substr((string) $result, 0, $limit - 1);
         }
 
         return (string) $result;
