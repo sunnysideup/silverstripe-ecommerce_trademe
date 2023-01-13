@@ -2,9 +2,10 @@
 
 namespace Sunnysideup\EcommerceTrademe\Tasks;
 
+use SilverStripe\Core\Environment;
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\ORM\DB;
-use SilverStripe\Core\Environment;
+
 /**
  * create CSV for TradeMe.
  */

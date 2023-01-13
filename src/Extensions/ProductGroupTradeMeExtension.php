@@ -5,10 +5,11 @@ namespace Sunnysideup\EcommerceTrademe\Extensions;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\OptionsetField;
 use SilverStripe\ORM\DataExtension;
+use SilverStripe\Versioned\Versioned;
 use Sunnysideup\Ecommerce\Pages\ProductGroup;
 use Sunnysideup\EcommerceTrademe\Api\TradeMeCategories;
 use Sunnysideup\EcommerceTrademe\Api\TradeMeGenericCmsFieldsProvider;
-use SilverStripe\Versioned\Versioned;
+
 /**
  * Product Group is a 'holder' for Products within the CMS
  * It contains functions for versioning child products.
