@@ -7,7 +7,7 @@ use SilverStripe\Control\Director;
 use SilverStripe\Dev\BuildTask;
 
 /**
- * Sends listings to trademe
+ * Sends listings to trademe.
  */
 class ExportToTradeMeTask extends BuildTask
 {
@@ -36,7 +36,9 @@ class ExportToTradeMeTask extends BuildTask
     private static $folder_to_upload_to = 'In';
 
     /**
-     * Run
+     * Run.
+     *
+     * @param mixed $request
      */
     public function run($request)
     {
@@ -68,14 +70,18 @@ class ExportToTradeMeTask extends BuildTask
 
     public static function file_location(): string
     {
-        $path = Director::baseFolder() . '/trademe_data/';
+        $path = Director::baseFolder() . '/' . PUBLIC_DIR . '/trademedata';
         Filesystem::makeFolder($path);
 
-        return $path . 'products.csv';
+        return $path . '/' . 'products.csv';
     }
 
     public static function url_location()
     {
-        return str_replace(Director::baseFolder() . '/', Director::absoluteURL('/'), self::file_location());
+        return str_replace(
+            Director::baseFolder() . '/' . PUBLIC_DIR . '/',
+            Director::absoluteURL('/'),
+            self::file_location()
+        );
     }
 }

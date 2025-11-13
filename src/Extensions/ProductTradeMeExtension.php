@@ -13,18 +13,11 @@ use Sunnysideup\Ecommerce\Pages\ProductGroup;
 use Sunnysideup\EcommerceTrademe\Api\TradeMeCategories;
 use Sunnysideup\EcommerceTrademe\Api\TradeMeGenericCmsFieldsProvider;
 
-/**
- * ### @@@@ START REPLACEMENT @@@@ ###
- * WHY: automated upgrade
- * OLD:  extends Extension (ignore case)
- * NEW:  extends Extension (COMPLEX)
- * EXP: Check for use of $this->anyVar and replace with $this->anyVar[$this->owner->ID] or consider turning the class into a trait
- * ### @@@@ STOP REPLACEMENT @@@@ ###
- */
 class ProductTradeMeExtension extends Extension
 {
     /**
-     * stadard SS declaration
+     * stadard SS declaration.
+     *
      * @var array
      */
     private static $db = [
@@ -33,24 +26,25 @@ class ProductTradeMeExtension extends Extension
     ];
 
     /**
-     * stadard SS declaration
+     * stadard SS declaration.
+     *
      * @var array
      */
     private static $has_one = [
-
-        /**
-         * ### @@@@ START REPLACEMENT @@@@ ###
-         * WHY: automated upgrade
-         * OLD:  => 'Image' (case sensitive)
-         * NEW:  => 'Image' (COMPLEX)
-         * EXP: you may want to add ownership (owns)
-         * ### @@@@ STOP REPLACEMENT @@@@ ###
-         */
         'TradeMeImage' => Image::class,
     ];
 
+    private static $owns = [
+        'TradeMeImage',
+    ];
+
+    private static $cascade_deletes = [
+        'TradeMeImage',
+    ];
+
     /**
-     * stadard SS declaration
+     * stadard SS declaration.
+     *
      * @var array
      */
     private static $indexes = [
@@ -58,13 +52,15 @@ class ProductTradeMeExtension extends Extension
     ];
 
     /**
-     * to identify
+     * to identify.
+     *
      * @var string
      */
     private static $trademe_group = '';
 
     /**
-     * to identify
+     * to identify.
+     *
      * @var string
      */
     private static $trade_me_intro = '';
@@ -80,8 +76,7 @@ class ProductTradeMeExtension extends Extension
     private static $trade_me_title_description_limit = 2048;
 
     /**
-     * stadard SS method
-     * @return FieldList
+     * stadard SS method.
      */
     public function updateCMSFields(FieldList $fields)
     {
@@ -92,17 +87,18 @@ class ProductTradeMeExtension extends Extension
                     $listOptions = OptionsetField::create(
                         'ShowOnTradeMe',
                         'Show on TradeMe?',
-                        $this->owner->dbObject('ShowOnTradeMe')->enumValues()
+                        $this->getOwner()->dbObject('ShowOnTradeMe')->enumValues()
                     ),
                     TradeMeCategories::categories_field(),
                     TradeMeCategories::calculated_categories_field($this->owner),
                     UploadField::create('TradeMeImage', 'TradeMeImage')
-                        ->setDescription('Recommended is a minimum size of 800px wide by 600px high.'),
+                        ->setDescription('Recommended is a minimum size of 800px wide by 600px high.')
+                        ->setFolderName('trade-me-product-images'),
                 ],
-                TradeMeGenericCmsFieldsProvider::get_fields($this->owner->Parent(), true)
+                TradeMeGenericCmsFieldsProvider::get_fields($this->getOwner()->Parent(), true)
             )
         );
-        $parent = $this->owner->Parent();
+        $parent = $this->getOwner()->getParent();
         if ($parent && $parent->exists()) {
             $listOptions->setDescription('
                 Currently this product\'s main category <strong>' . $parent->Title . '</strong>
@@ -116,7 +112,6 @@ class ProductTradeMeExtension extends Extension
      * looks at TradeMe Category from the product itself
      * and it not found goes up the line (parent , parent.parent, etc...)
      * to find the applicable trade me category.
-     * @return int
      */
     public function getCalculatedTradeMeCategory(): int
     {
@@ -130,7 +125,7 @@ class ProductTradeMeExtension extends Extension
             if ($id) {
                 return $id;
             }
-            $parent = ProductGroup::get()->byID($parent->owner->ParentID);
+            $parent = ProductGroup::get_by_id($parent->ParentID);
         }
 
         return 0;
@@ -138,15 +133,14 @@ class ProductTradeMeExtension extends Extension
 
     /**
      * returns the right trade me category.
-     * @return int
      */
     public function CalculatedTradeMeCategoryWithDefaultAndAdjustments(): int
     {
-        $categoryID = $this->owner->getCalculatedTradeMeCategory();
+        $categoryID = $this->getOwner()->getCalculatedTradeMeCategory();
 
         if ($categoryID) {
-            if ($this->owner->hasMethod('getTradeMeCustomCategory')) {
-                $categoryID = $this->owner->getTradeMeCustomCategory($categoryID);
+            if ($this->getOwner()->hasMethod('getTradeMeCustomCategory')) {
+                $categoryID = $this->getOwner()->getTradeMeCustomCategory($categoryID);
             }
         } else {
             $categoryID = Config::inst()->get(TradeMeCategories::class, 'trade_me_default');
@@ -158,28 +152,27 @@ class ProductTradeMeExtension extends Extension
     /**
      * returns the title of the product for TradeMe.
      *
-     * @param  boolean $checkLimit
-     * @return string
+     * @param bool $checkLimit
      */
     public function getTradeMeTitle(?bool $checkLimit = true): string
     {
-        $result = $this->owner->Title;
+        $result = $this->getOwner()->Title;
         $result = str_replace('&', ' and ', $result);
         if ($checkLimit) {
             $limit = Config::inst()->get(ProductTradeMeExtension::class, 'trade_me_title_char_limit');
-            $result = substr($result, 0, $limit - 1);
+            $result = substr((string) $result, 0, $limit - 1);
         }
+
         return (string) $result;
     }
 
     /**
-     * @param  boolean $checkLimit
-     * @return string
+     * @param bool $checkLimit
      */
     public function getTradeMeContent(?bool $checkLimit = true): string
     {
         $intro = EcommerceDBConfig::current_ecommerce_db_config()->TradeMeIntro;
-        $content = $this->owner->Content;
+        $content = $this->getOwner()->Content;
 
         //merge content
         $items = array_filter([$intro, $content]);
@@ -202,7 +195,7 @@ class ProductTradeMeExtension extends Extension
         //limit
         if ($checkLimit) {
             $limit = $limit = Config::inst()->get(ProductTradeMeExtension::class, 'trade_me_title_description_limit');
-            $result = substr($result, 0, $limit - 1);
+            $result = substr((string) $result, 0, $limit - 1);
         }
 
         return (string) $result;

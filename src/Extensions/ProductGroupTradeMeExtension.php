@@ -5,15 +5,14 @@ namespace Sunnysideup\EcommerceTrademe\Extensions;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\OptionsetField;
 use SilverStripe\ORM\DataExtension;
+use SilverStripe\Versioned\Versioned;
 use Sunnysideup\Ecommerce\Pages\ProductGroup;
 use Sunnysideup\EcommerceTrademe\Api\TradeMeCategories;
 use Sunnysideup\EcommerceTrademe\Api\TradeMeGenericCmsFieldsProvider;
 
 /**
  * Product Group is a 'holder' for Products within the CMS
- * It contains functions for versioning child products
- *
- * @package ecommerce
+ * It contains functions for versioning child products.
  */
 
 /**
@@ -21,8 +20,8 @@ use Sunnysideup\EcommerceTrademe\Api\TradeMeGenericCmsFieldsProvider;
  * WHY: automated upgrade
  * OLD:  extends DataExtension (ignore case)
  * NEW:  extends DataExtension (COMPLEX)
- * EXP: Check for use of $this->anyVar and replace with $this->anyVar[$this->owner->ID] or consider turning the class into a trait
- * ### @@@@ STOP REPLACEMENT @@@@ ###
+ * EXP: Check for use of $this->anyVar and replace with $this->anyVar[$this->getOwner()->ID] or consider turning the class into a trait
+ * ### @@@@ STOP REPLACEMENT @@@@ ###.
  */
 class ProductGroupTradeMeExtension extends DataExtension
 {
@@ -39,8 +38,8 @@ class ProductGroupTradeMeExtension extends DataExtension
                 [
                     OptionsetField::create(
                         'ListProductsOnTradeMe',
-                        'List ' . $this->owner->Title . ' on TradeMe?',
-                        $this->owner->dbObject('ListProductsOnTradeMe')->enumValues()
+                        'List ' . $this->getOwner()->Title . ' on TradeMe?',
+                        $this->getOwner()->dbObject('ListProductsOnTradeMe')->enumValues()
                     )->setDescription('
                         Careful - saving this will also change the value for any underlying categories.
                         <br />E.g. If you set this value for Vegetables, it will also apply to Brocoli'),
@@ -54,7 +53,7 @@ class ProductGroupTradeMeExtension extends DataExtension
 
     public function onBeforeWrite()
     {
-        $this->owner->updateChildGroupsForTradeMe();
+        $this->getOwner()->updateChildGroupsForTradeMe();
     }
 
     public function getCalculatedTradeMeCategory(): int
@@ -64,7 +63,7 @@ class ProductGroupTradeMeExtension extends DataExtension
             if ($parent->TradeMeCategoryID) {
                 return $parent->TradeMeCategoryID;
             }
-            $parent = ProductGroup::get()->byID($parent->ParentID);
+            $parent = ProductGroup::get_by_id($parent->ParentID);
         }
 
         return 0;
@@ -72,29 +71,30 @@ class ProductGroupTradeMeExtension extends DataExtension
 
     public function CalculatedTradeMeCategoryWithDefaultAndAdjustments(): int
     {
-        return $this->owner->getCalculatedTradeMeCategory();
+        return $this->getOwner()->getCalculatedTradeMeCategory();
     }
 
     public function updateChildGroupsForTradeMe()
     {
-        $myValue = $this->owner->ListProductsOnTradeMe;
+        $myValue = $this->getOwner()->ListProductsOnTradeMe;
         switch ($myValue) {
             case 'none':
             case 'all':
                 $hasUpdate = true;
+
                 break;
             case 'some':
             default:
                 //do nothing
                 $hasUpdate = false;
         }
-        if ($hasUpdate === true) {
-            $children = ProductGroup::get()->filter(['ParentID' => $this->owner->ID]);
+        if (true === $hasUpdate) {
+            $children = ProductGroup::get()->filter(['ParentID' => $this->getOwner()->ID]);
             foreach ($children as $child) {
                 if ($child->ListProductsOnTradeMe !== $myValue) {
                     $child->ListProductsOnTradeMe = $myValue;
-                    $child->writeToStage('Stage');
-                    $child->doPublish();
+                    $child->writeToStage(Versioned::DRAFT);
+                    $child->publishRecursive();
                 }
             }
         }

@@ -14,18 +14,22 @@ use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\OptionsetField;
 use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\ORM\ArrayList;
+use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\ORM\PaginatedList;
+use SilverStripe\Security\Group;
 use SilverStripe\Security\Permission;
-use SilverStripe\Security\PermissionProvider;
 use SilverStripe\Security\Security;
 use SilverStripe\View\ArrayData;
+use Sunnysideup\Ecommerce\Model\Extensions\EcommerceRole;
 use Sunnysideup\Ecommerce\Pages\ProductGroup;
 use Sunnysideup\EcommerceTrademe\Api\TradeMeCategories;
 use Sunnysideup\EcommerceTrademe\Tasks\CreateTradeMeCsvTask;
+use Sunnysideup\PermissionProvider\Api\PermissionProviderFactory;
+use Sunnysideup\PermissionProvider\Interfaces\PermissionProviderFactoryProvider;
 
-class TradeMeAssignGroupController extends Controller implements PermissionProvider
+class TradeMeAssignGroupController extends Controller implements PermissionProviderFactoryProvider
 {
     protected $getParams = [];
 
@@ -38,7 +42,7 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
     /**
      * @var string
      */
-    private static $url_segment = 'admin/set-trade-me-categories';
+    private static $url_segment = 'tradmeadmin/set-trade-me-categories';
 
     private static $allowed_actions = [
         'index' => 'CMS_ACCESS_TRADE_ME',
@@ -47,32 +51,21 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
         'Form' => 'CMS_ACCESS_TRADE_ME',
     ];
 
-    private static $create_trademe_csv_task_class_name = CreateTradeMeCsvTask::class;
-
     private static $group_filter = [];
 
     private static $template = 'TradeMeAssignGroupController_Content';
 
     public function index($request)
     {
-
-        /**
-         * ### @@@@ START REPLACEMENT @@@@ ###
-         * WHY: automated upgrade
-         * OLD: ->RenderWith( (ignore case)
-         * NEW: ->RenderWith( (COMPLEX)
-         * EXP: Check that the template location is still valid!
-         * ### @@@@ STOP REPLACEMENT @@@@ ###
-         */
         return $this->RenderWith($this->Config()->get('template'));
     }
 
     public function getFilter()
     {
-        return $this->getParams['filter'];
+        return $this->getParams['filter'] ?? '';
     }
 
-    public function getFilterCount()
+    public function getFilterCount(): int
     {
         return $this->getListForForm()->count();
     }
@@ -126,8 +119,9 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
         foreach ($this->getListForForm() as $group) {
             $productList = TradeMeAssignProductController::base_list();
             $productList = $productList->filter(['ParentID' => $group->ID]);
-            $productCount = $productList->count();
-            if ($productCount) {
+            $productCountExists = $productList->exists();
+            if ($productCountExists) {
+                $productCount = $productList->count();
                 $productLink = TradeMeAssignProductController::my_link('', ['parentid' => $group->ID]);
                 $name = '___GROUP___' . $group->ID;
                 $breadcrumb = $group->Breadcrumbs();
@@ -146,7 +140,7 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
                 $fieldListSortable[$breadcrumbClean]->push(
                     ReadonlyField::create(
                         'HEADER' . $name,
-                        '<a href="' . $group->CMSEditLink() . '">✎</a>',
+                        DBField::create_field('HTMLText', '<a href="' . $group->CMSEditLink() . '">✎</a>'),
                         DBField::create_field('HTMLText', $breadcrumbRaw . ' » <a href="' . $productLink . '">Edit Individual Products (' . $productCount . ')</a>')
                     )
                         ->setRightTitle(
@@ -172,19 +166,19 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
 
         $actions = $this->getFormActions();
 
-        return new Form($this, Form::class, $fields, $actions);
+        return new Form($this, 'Form', $fields, $actions);
     }
 
     public function Title()
     {
-        return 'Set TradeMe Categories';
+        return 'Select what Categories go to TradeMe';
     }
 
     public function saveandexport($data, $form)
     {
         $this->saveInner($data, $form);
 
-        $link = '/dev/tasks/' . $this->Config()->get('create_trademe_csv_task_class_name');
+        $link = CreateTradeMeCsvTask::my_link();
 
         return $this->redirect($link);
     }
@@ -204,15 +198,16 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
         $al->push(ArrayData::create([
             'Link' => TradeMeAssignGroupController::my_link(),
             'Title' => 'Categories',
-            'IsCurrent' => static::class === TradeMeAssignGroupController::class,
+            'IsCurrent' => TradeMeAssignGroupController::class === static::class,
         ]));
         $al->push(ArrayData::create([
             'Link' => TradeMeAssignProductController::my_link(),
             'Title' => 'Products',
-            'IsCurrent' => static::class === TradeMeAssignProductController::class,
+            'IsCurrent' => TradeMeAssignProductController::class === static::class,
         ]));
 
         $this->extend('getMainLinksAdditional', $al);
+
         return $al;
     }
 
@@ -251,24 +246,21 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
         return $al;
     }
 
-    public function providePermissions(): array
+    public static function permission_provider_factory_runner(): Group
     {
-        return [
-            'CMS_ACCESS_TRADE_ME' => [
-                'name' => 'Trade Me',
-                'category' => _t('Permission.CMS_ACCESS_CATEGORY', 'CMS Access'),
-                'help' => 'Export products to TradeMe',
-            ],
-        ];
+        return PermissionProviderFactory::inst()
+            ->setParentGroup(EcommerceRole::get_category())
+
+            ->setGroupName('Trade Me')
+            ->setPermissionCode('CMS_ACCESS_TRADE_ME')
+
+            ->setSort(250)
+            ->setDescription('Manage products on TradeMe')
+
+            ->CreateGroupAndMember()
+        ;
     }
 
-    /**
-     * ### @@@@ START REPLACEMENT @@@@ ###
-     * OLD:     public function init() (ignore case)
-     * NEW:     protected function init() (COMPLEX)
-     * EXP: Controller init functions are now protected  please check that is a controller.
-     * ### @@@@ STOP REPLACEMENT @@@@ ###
-     */
     protected function init()
     {
         parent::init();
@@ -295,6 +287,7 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
             $options = $this->getListProductsOnTradeMeOptions();
             if (! in_array($this->getParams['filter'], $options, true)) {
                 $this->getParams['filter'] = '';
+
                 return $this->httpError('404', 'Category does not exist');
             }
         }
@@ -306,6 +299,7 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
         if ($this->getParams['filter']) {
             $list = $list->filter(['ListProductsOnTradeMe' => $this->getParams['filter']]);
         }
+
         return $list;
     }
 
@@ -323,6 +317,7 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
         foreach ($this->getParams as $key => $value) {
             $arrayOfFields[] = HiddenField::create($key)->setValue($value);
         }
+
         return $arrayOfFields;
     }
 
@@ -331,18 +326,18 @@ class TradeMeAssignGroupController extends Controller implements PermissionProvi
         $updateCount = 0;
         foreach ($data as $key => $value) {
             $array = explode('___', $key);
-            if (count($array) === 3) {
+            if (3 === count($array)) {
                 $field = $array[0];
                 $type = $array[1];
                 $groupId = intval($array[2]);
-                if ($field === 'ListProductsOnTradeMe' && $type === 'GROUP') {
-                    $group = ProductGroup::get()->byID($groupId);
+                if ('ListProductsOnTradeMe' === $field && 'GROUP' === $type) {
+                    $group = ProductGroup::get_by_id($groupId);
                     if ($group) {
                         if ($group->ListProductsOnTradeMe !== $value) {
                             $group->ListProductsOnTradeMe = $value;
                             $group->writeToStage('Stage');
                             $group->publish('Stage', 'Live');
-                            $updateCount++;
+                            ++$updateCount;
                         }
                     } else {
                         user_error('Could not find Category based on ' . $key);

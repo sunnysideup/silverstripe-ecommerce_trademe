@@ -8,6 +8,7 @@ use SilverStripe\Forms\Form;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\OptionsetField;
 use SilverStripe\Forms\ReadonlyField;
+use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBField;
 use Sunnysideup\Ecommerce\Pages\Product;
@@ -19,7 +20,7 @@ class TradeMeAssignProductController extends TradeMeAssignGroupController
     /**
      * @var string
      */
-    private static $url_segment = 'admin/set-trade-me-products';
+    private static $url_segment = 'tradmeadmin/set-trade-me-products';
 
     private static $product_filter = [];
 
@@ -47,11 +48,16 @@ class TradeMeAssignProductController extends TradeMeAssignGroupController
                     ->setValue($product->ShowOnTradeMe)
                     ->addExtraClass('float-left')
             );
+            $parent = $product->ParentGroup();
             $fields->push(
                 ReadonlyField::create(
                     'HEADER' . $name,
-                    '<a href="' . $product->CMSEditLink() . '">✎</a>',
-                    DBField::create_field('HTMLText', '<a href="' . $product->Link() . '">' . $product->InternalItemID . ' - ' . $product->Title . '</a>')
+                    DBField::create_field('HTMLText', '<a href="' . $product->CMSEditLink() . '">✎</a>'),
+                    DBField::create_field(
+                        'HTMLText',
+                        '<a href="' . $product->Link() . '">' . $product->InternalItemID . ' - ' . $product->Title . '</a>' .
+                        ' (in <a href="' . $parent->CMSEditLink() . '">' . $parent->Title . '</a>)'
+                    )
                 )->setRightTitle(
                     '» ' . TradeMeCategories::get_title_from_id($product->getCalculatedTradeMeCategory()) .
                     ''
@@ -71,7 +77,7 @@ class TradeMeAssignProductController extends TradeMeAssignGroupController
 
         $actions = $this->getFormActions();
 
-        return new Form($this, Form::class, $fields, $actions);
+        return new Form($this, 'Form', $fields, $actions);
     }
 
     public static function base_list(): DataList
@@ -90,31 +96,44 @@ class TradeMeAssignProductController extends TradeMeAssignGroupController
         return $this->productGroup;
     }
 
-    public function Title()
+    public function Title(): string
     {
         if ($this->productGroup) {
-            return 'TradeMe Settings for "' . $this->productGroup->Title . '"';
+            return 'Select what Products in the "' . $this->productGroup->Title . '" category go to TradeMe';
         }
-        return 'TradeMe Settings for Products';
+
+        return 'Select what Products go to TradeMe';
     }
 
+    public function Description(): string
+    {
+        return 'Below is a list of all product categories on the site with their associated TradeMe Category.
+        You can select the rules for each category in terms of what products are sent to TradeMe.';
+    }
+
+    /**
+     * NOTE: this should not contain any redirects!
+     *
+     * @param array $data
+     * @param Form  $form
+     */
     public function saveInner($data, $form)
     {
         $updateCount = 0;
         foreach ($data as $key => $value) {
             $array = explode('___', $key);
-            if (count($array) === 3) {
+            if (3 === count($array)) {
                 $field = $array[0];
                 $type = $array[1];
                 $productID = intval($array[2]);
-                if ($type === 'PRODUCT' && $field === 'ShowOnTradeMe') {
-                    $product = Product::get()->byID($productID);
+                if ('PRODUCT' === $type && 'ShowOnTradeMe' === $field) {
+                    $product = Product::get_by_id($productID);
                     if ($product) {
                         if ($product->ShowOnTradeMe !== $value) {
                             $product->ShowOnTradeMe = $value;
                             $product->writeToStage('Stage');
                             $product->publish('Stage', 'Live');
-                            $updateCount++;
+                            ++$updateCount;
                         }
                     } else {
                         user_error('Could not find Product based on ' . $key);
@@ -126,8 +145,6 @@ class TradeMeAssignProductController extends TradeMeAssignGroupController
         if ($updateCount) {
             $form->sessionMessage('Updated ' . $updateCount . ' records.', 'good');
         }
-
-        return $this->redirectBack();
     }
 
     protected function getListProductsOnTradeMeOptions(): array
@@ -155,7 +172,7 @@ class TradeMeAssignProductController extends TradeMeAssignGroupController
     protected function setGetParams()
     {
         parent::setGetParams();
-        $this->productGroup = ProductGroup::get()->byID($this->getParams['parentid']);
+        $this->productGroup = ProductGroup::get_by_id($this->getParams['parentid']);
         if ($this->getParams['parentid'] && ! $this->productGroup) {
             return $this->httpError(404, 'Could not find category with ID = ' . $this->getParams['parentid']);
         }

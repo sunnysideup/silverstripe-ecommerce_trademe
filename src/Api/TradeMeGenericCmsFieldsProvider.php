@@ -2,17 +2,20 @@
 
 namespace Sunnysideup\EcommerceTrademe\Api;
 
-use SilverStripe\Core\Config\Config;
+use SilverStripe\Forms\FormField;
 use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\ORM\FieldType\DBField;
 use Sunnysideup\EcommerceTrademe\Control\TradeMeAssignGroupController;
 use Sunnysideup\EcommerceTrademe\Control\TradeMeAssignProductController;
+use Sunnysideup\EcommerceTrademe\Tasks\CreateTradeMeCsvTask;
 
 class TradeMeGenericCmsFieldsProvider
 {
     /**
-     * @param  ProductGroup $group|null
-     * @return array[FormField]
+     * @param mixed $group
+     * @param mixed $showConfigLink
+     *
+     * @return FormField[]
      */
     public static function get_fields($group = null, $showConfigLink = false): array
     {
@@ -36,7 +39,7 @@ class TradeMeGenericCmsFieldsProvider
             );
         }
 
-        $link = '/dev/tasks/' . Config::inst()->get(TradeMeAssignGroupController::class, 'create_trademe_csv_task_class_name');
+        $link = CreateTradeMeCsvTask::my_link();
 
         $ar = [
             ReadonlyField::create(
@@ -53,7 +56,7 @@ class TradeMeGenericCmsFieldsProvider
                 'Export',
                 DBField::create_field(
                     'HTMLText',
-                    '<a href="dev/tasks/' . Config::inst()->get(TradeMeAssignGroupController::class, 'create_trademe_csv_task_class_name') . '">Export to TradeMe</a>'
+                    '<a href="' . CreateTradeMeCsvTask::my_link() . '">Export to TradeMe</a>'
                 )
             ),
         ];
@@ -75,6 +78,7 @@ class TradeMeGenericCmsFieldsProvider
                 '<a href="' . $link . '">Start export process now</a>'
             )
         );
+
         return $ar;
     }
 }

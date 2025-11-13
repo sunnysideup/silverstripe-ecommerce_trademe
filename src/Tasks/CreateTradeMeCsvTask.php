@@ -3,13 +3,15 @@
 namespace Sunnysideup\EcommerceTrademe\Tasks;
 
 use SilverStripe\Control\Director;
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Core\Environment;
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\ORM\DB;
 use Sunnysideup\EcommerceTrademe\Api\CsvFunctionality;
 use Sunnysideup\EcommerceTrademe\Control\TradeMeAssignProductController;
 
 /**
- * create CSV for TradeMe
+ * create CSV for TradeMe.
  */
 class CreateTradeMeCsvTask extends BuildTask
 {
@@ -20,7 +22,8 @@ class CreateTradeMeCsvTask extends BuildTask
     /**
      * array of fields for TradeMe and their default values
      * if no default value is set then you will have to set one
-     * in the method using a variable with the same name ... e.g. $sku
+     * in the method using a variable with the same name ... e.g. $sku.
+     *
      * @var array
      */
     protected $fields = [
@@ -34,7 +37,8 @@ class CreateTradeMeCsvTask extends BuildTask
         'stockLevel' => null,
         'isGallery' => 0,
         'isNew' => 1,
-        'allowCreditCard' => 1,
+        'allowBankTransfer' => 1,
+        'allowCreditCard' => null,
         'allowAfterpay' => null,
         'sendPaymentInstructions' => 0,
         'shippingPrice1' => null,
@@ -89,6 +93,19 @@ class CreateTradeMeCsvTask extends BuildTask
 
     protected $html = '';
 
+    private static $create_trademe_csv_task_class_name = self::class;
+
+    public static function my_link(): string
+    {
+        $class = Config::inst()->get(CreateTradeMeCsvTask::class, 'create_trademe_csv_task_class_name');
+        $link = Config::inst()->get($class, 'segment');
+        if (! $link) {
+            $link = str_replace('\\', '-', $class);
+        }
+
+        return '/dev/tasks/' . $link;
+    }
+
     public function setVerbose(bool $b)
     {
         $this->verbose = $b;
@@ -102,11 +119,13 @@ class CreateTradeMeCsvTask extends BuildTask
     }
 
     /**
-     * Run
+     * Run.
+     *
+     * @param mixed $request
      */
     public function run($request)
     {
-        Silverstripe\Core\Environment::increaseTimeLimitTo(600);
+        Environment::increaseTimeLimitTo(600);
         $this->debug = empty($_GET['details']) ? false : true;
         if (! $this->debug) {
             $this->output('<h4>Add ?details=1 to your URL to see all the details on screen...</h4>');
@@ -139,7 +158,7 @@ class CreateTradeMeCsvTask extends BuildTask
             $imageCollection[] = $image;
         }
         $fileNames = [];
-        foreach ($imageCollection as $key => $image) {
+        foreach ($imageCollection as $image) {
             if ($image && $image->exists()) {
                 $link = '';
                 if ($image->getWidth() >= $this->minImageWidth && $image->getHeight() >= $this->minImageHeight) {
@@ -157,9 +176,6 @@ class CreateTradeMeCsvTask extends BuildTask
         return $fileNames;
     }
 
-    /**
-     * @return array
-     */
     protected function getData(): array
     {
         $array = [];
@@ -169,7 +185,8 @@ class CreateTradeMeCsvTask extends BuildTask
 
         $products = TradeMeAssignProductController::base_list()
             ->filter(['ID' => $this->getIDsOfProducts()])
-            ->sort('InternalItemID');
+            ->sort('InternalItemID')
+        ;
         $this->output('There are ' . $products->count() . ' potential products to be listed on TradeMe.', 'good');
         foreach ($products as $product) {
             $innerArray = [];
@@ -179,7 +196,7 @@ class CreateTradeMeCsvTask extends BuildTask
                 $data['Data'] = array_combine(array_keys($this->fields), $data['Data']);
                 echo '<pre>' . print_r($data, 1) . '</pre>';
             }
-            foreach ($data['Data'] as $key => $value) {
+            foreach ($data['Data'] as $value) {
                 $innerArray[] = CsvFunctionality::removeBadCharacters($value);
             }
             if (! empty($data['Include'])) {
@@ -187,7 +204,7 @@ class CreateTradeMeCsvTask extends BuildTask
                     $categoryListings[$data['TradeMeCategory']] = [];
                 }
                 $categoryListings[$data['TradeMeCategory']][] = '<a href="/' . $product->CMSEditLink() . '">' . $product->InternalItemID . ' - ' . $product->Title . '</a>';
-                $countForReal++;
+                ++$countForReal;
             }
             if (! empty($data['HasError'])) {
                 if (! isset($data['HasError'])) {
@@ -215,11 +232,10 @@ class CreateTradeMeCsvTask extends BuildTask
 
     /**
      * we use this method to pre-select products that are eligible:
-     * see WHERE statement for LOGIC
+     * see WHERE statement for LOGIC.
      */
     protected function getIDsOfProducts(): array
     {
-
         //get all the products that are applicable
         $sql = '
             SELECT
@@ -246,6 +262,7 @@ class CreateTradeMeCsvTask extends BuildTask
         foreach ($rows as $row) {
             $array[$row['ProductID']] = $row['ProductID'];
         }
+
         return $array;
     }
 
@@ -259,9 +276,8 @@ class CreateTradeMeCsvTask extends BuildTask
                 $html .= '<li>' . $value . '</li>';
             }
         }
-        $html .= '</ul>';
 
-        return $html;
+        return $html . '</ul>';
     }
 
     protected function output(string $msg, ?string $style = '')
@@ -270,14 +286,17 @@ class CreateTradeMeCsvTask extends BuildTask
             case 'good':
             case 'created':
                 $colour = 'green';
+
                 break;
             case 'info':
             case 'obsolete':
                 $colour = 'orange';
+
                 break;
             case 'bad':
             case 'deleted':
                 $colour = 'red';
+
                 break;
             default:
                 $colour = 'black';

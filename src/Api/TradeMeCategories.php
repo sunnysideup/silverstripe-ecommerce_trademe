@@ -14,20 +14,22 @@ use SilverStripe\View\ViewableData;
  * OLD:  extends Object (ignore case)
  * NEW:  extends ViewableData (COMPLEX)
  * EXP: This used to extend Object, but object does not exist anymore. You can also manually add use Extensible, use Injectable, and use Configurable
- * ### @@@@ STOP REPLACEMENT @@@@ ###
+ * ### @@@@ STOP REPLACEMENT @@@@ ###.
  */
 class TradeMeCategories extends ViewableData
 {
     /**
      * e.g.
-     * 4751 => 'Electronics-photography > Batteries > Disposable > AA
+     * 4751 => 'Electronics-photography > Batteries > Disposable > AA.
+     *
      * @var array
      */
-    private static $trade_me_categories = 0;
+    private static $trade_me_categories = [];
 
     /**
-     * default category for trademe (backup)
-     * @var int
+     * default category for trademe (backup).
+     *
+     * @var string
      */
     private static $trade_me_default = '';
 
@@ -42,6 +44,7 @@ class TradeMeCategories extends ViewableData
         if (! $categoryID) {
             $categoryID = Config::inst()->get(TradeMeCategories::class, 'trade_me_default');
         }
+
         return $array[$categoryID] ?? 'unknown category';
     }
 
@@ -66,14 +69,17 @@ class TradeMeCategories extends ViewableData
                     The TradeMe Category for this Category/Product is set by one of the parent Product Categories.
                 ');
         }
+
         return HiddenField::create('CalculatedCategory');
     }
 
-    public static function get_trade_me_categories()
+    public static function get_trade_me_categories(): array
     {
+        $categories = [];
         foreach (self::get_categories() as $id => $category) {
             $categories[$id] = $category . ' (' . $id . ')';
         }
+
         return $categories;
     }
 }

@@ -3,5 +3,5 @@ Name: trademeroutes
 ---
 SilverStripe\Control\Director:
   rules:
-    admin/set-trade-me-categories//$Action/$ID/$OtherID: Sunnysideup\EcommerceTrademe\Control\TradeMeAssignGroupController
-    admin/set-trade-me-products//$Action/$ID/$OtherID: Sunnysideup\EcommerceTrademe\Control\TradeMeAssignProductController
+    tradmeadmin/set-trade-me-categories//$Action/$ID/$OtherID: Sunnysideup\EcommerceTrademe\Control\TradeMeAssignGroupController
+    tradmeadmin/set-trade-me-products//$Action/$ID/$OtherID: Sunnysideup\EcommerceTrademe\Control\TradeMeAssignProductController
