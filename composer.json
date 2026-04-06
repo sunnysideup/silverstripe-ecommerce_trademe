@@ -1,33 +1,33 @@
 {
-    "name": "sunnysideup/ecommerce_trademe",
-    "type": "silverstripe-vendormodule",
-    "description": "Upload your silverstripe e-commerce products to TradeMe (New Zealand version of E-Bay and the like).",
-    "keywords": [
-        "Silverstripe-CMS",
-        "CMS",
-        "Silverstripe",
-        "ecommerce",
-        "e-commerce",
-        "shop",
-        "trade me",
-        "trademe"
-    ],
-    "license": "BSD-3-Clause",
-    "authors": [
-        {
-            "name": "Nicolaas Francken",
-            "email": "modules@sunnysideup.co.nz",
-            "role": "lead developer"
-        }
-    ],
-    "require": {
-        "sunnysideup/ecommerce": "*",
-        "silverstripe/recipe-cms": "^4.0 || ^5.0"
-    },
-    "extra": [],
-    "autoload": {
-        "psr-4": {
-            "Sunnysideup\\EcommerceTrademe\\": "src/"
-        }
+  "name": "sunnysideup/ecommerce_trademe",
+  "type": "silverstripe-vendormodule",
+  "description": "Upload your silverstripe e-commerce products to TradeMe (New Zealand version of E-Bay and the like).",
+  "keywords": [
+    "Silverstripe-CMS",
+    "CMS",
+    "Silverstripe",
+    "ecommerce",
+    "e-commerce",
+    "shop",
+    "trade me",
+    "trademe"
+  ],
+  "license": "BSD-3-Clause",
+  "authors": [
+    {
+      "name": "Nicolaas Francken",
+      "email": "modules@sunnysideup.co.nz",
+      "role": "lead developer"
     }
+  ],
+  "require": {
+    "sunnysideup/ecommerce": "5.x-dev",
+    "silverstripe/recipe-cms": "^4.0 || ^5.0"
+  },
+  "extra": [],
+  "autoload": {
+    "psr-4": {
+      "Sunnysideup\\EcommerceTrademe\\": "src/"
+    }
+  }
 }
